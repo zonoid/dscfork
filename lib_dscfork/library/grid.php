@@ -15,7 +15,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 require_once (JPATH_SITE . '/libraries/joomla/grid/grid.php');
 
-class DSCForkGrid extends JGrid
+class StratumGrid extends JGrid
 {
 	/**
 	 * @param	string	The link title
@@ -32,11 +32,11 @@ class DSCForkGrid extends JGrid
 		$index = intval( $direction == 'desc' );
 		$direction = ($direction == 'desc') ? 'asc' : 'desc';
 
-		$html = '<a href="javascript:dscfork.gridOrdering(\'' . $order . '\',\'' . $direction . '\', ' . $form . ' );" title="' . JText::_( 'LIB_DSCFORK_CLICK_TO_SORT_BY_THIS_COLUMN' ) . '">';
+		$html = '<a href="javascript:stratum.gridOrdering(\'' . $order . '\',\'' . $direction . '\', ' . $form . ' );" title="' . JText::_( 'LIB_STRATUM_CLICK_TO_SORT_BY_THIS_COLUMN' ) . '">';
 		$html .= JText::_( $title );
 		if ( $order == $selected )
 		{
-			$html .= '<img src="' . DSCFork::getURL( 'images' ) . $images[$index] . '" border="0" alt="' . $alts[$index] . '" class="dscfork-grid-sort" />';
+			$html .= '<img src="' . Stratum::getURL( 'images' ) . $images[$index] . '" border="0" alt="' . $alts[$index] . '" class="stratum-grid-sort" />';
 		}
 		$html .= '</a>';
 		return $html;
@@ -50,15 +50,15 @@ class DSCForkGrid extends JGrid
 	 *
 	 * @return  HTML
 	 */
-	public static function searchform( $value = '', $search = "Search", $reset = "Reset", $class = "dscfork-right dscfor-search" )
+	public static function searchform( $value = '', $search = "Search", $reset = "Reset", $class = "stratum-right stratum-search" )
 	{
          $html = '
         <div class="input-append '.$class.'">
 	    	<input name="filter" value="'.$value.'" type="text" id="appendedInputButtons" class="input input-xlarge">
 	    	<button class="btn btn-primary" type="button" onclick="this.form.submit();"><i class="icon-search icon-white"></i> '.$search.'</button>
-	    	<button class="btn btn-danger" type="button" onclick="dscfork.resetFormFilters(this.form);"><i class="icon-refresh icon-white"></i> '.$reset.'</button>
+		<button class="btn btn-danger" type="button" onclick="stratum.resetFormFilters(this.form);"><i class="icon-refresh icon-white"></i> '.$reset.'</button>
 	    </div>
-	    <div class="dscfork-clear"></div>
+	    <div class="stratum-clear"></div>
         ';
 
 		return $html;
@@ -90,11 +90,11 @@ class DSCForkGrid extends JGrid
 	 */
 	public static function order( $id, $image = 'filesave.png', $task = 'saveorder', $form = 'document.adminForm' )
 	{
-		$result = '<a href="javascript:dscfork.gridOrder(' . $id . ', -1, ' . $form . ')" >';
-		$result .= '<img src="' . DSCFork::getURL( 'images' ) . 'uparrow.png" border="0" alt="' . JText::_( "LIB_DSCFORK_MOVE_UP" ) . '" />';
+		$result = '<a href="javascript:stratum.gridOrder(' . $id . ', -1, ' . $form . ')" >';
+		$result .= '<img src="' . Stratum::getURL( 'images' ) . 'uparrow.png" border="0" alt="' . JText::_( "LIB_STRATUM_MOVE_UP" ) . '" />';
 		$result .= '</a>';
-		$result .= '<a href="javascript:dscfork.gridOrder(' . $id . ', 1, ' . $form . ')" >';
-		$result .= '<img src="' . DSCFork::getURL( 'images' ) . 'downarrow.png" border="0" alt="' . JText::_( "LIB_DSCFORK_MOVE_DOWN" ) . '" />';
+		$result .= '<a href="javascript:stratum.gridOrder(' . $id . ', 1, ' . $form . ')" >';
+		$result .= '<img src="' . Stratum::getURL( 'images' ) . 'downarrow.png" border="0" alt="' . JText::_( "LIB_STRATUM_MOVE_DOWN" ) . '" />';
 		$result .= '</a>';
 
 		return $result;
@@ -138,19 +138,19 @@ class DSCForkGrid extends JGrid
 		$true_text = $true_text ? $true_text : 'JYES';
 		$false_text = $false_text ? $false_text : 'JNO';
 
-		return '<img src="' . DSCFork::getURL( 'images' ) . ($bool ? $true_img : $false_img) . '" border="0" alt="' . JText::_( $bool ? $true_text : $false_text ) . '" />';
+		return '<img src="' . Stratum::getURL( 'images' ) . ($bool ? $true_img : $false_img) . '" border="0" alt="' . JText::_( $bool ? $true_text : $false_text ) . '" />';
 	}
 
 	public static function published( $row, $i, $imgY = 'tick.png', $imgX = 'publish_x.png', $prefix = '' )
 	{
 		$img = $row->published ? $imgY : $imgX;
 		$task = $row->published ? 'unpublish' : 'publish';
-		$alt = $row->published ? JText::_( 'LIB_DSCFORK_MOVE_PUBLISHED' ) : JText::_( 'LIB_DSCFORK_MOVE_UNPUBLISHED' );
-		$action = $row->published ? JText::_( 'LIB_DSCFORK_UNPUBLISH_ITEM' ) : JText::_( 'LIB_DSCFORK_PUBLISH_ITEM' );
+		$alt = $row->published ? JText::_( 'LIB_STRATUM_MOVE_PUBLISHED' ) : JText::_( 'LIB_STRATUM_MOVE_UNPUBLISHED' );
+		$action = $row->published ? JText::_( 'LIB_STRATUM_UNPUBLISH_ITEM' ) : JText::_( 'LIB_STRATUM_PUBLISH_ITEM' );
 
 		$href = '
-		<a href="javascript:void(0);" onclick="return dscfork.listItemTask(\'cb' . $i . '\',\'' . $prefix . $task . '\')" title="' . $action . '">
-		<img src="' . DSCFork::getURL( 'images' ) . $img . '" border="0" alt="' . $alt . '" /></a>';
+		<a href="javascript:void(0);" onclick="return stratum.listItemTask(\'cb' . $i . '\',\'' . $prefix . $task . '\')" title="' . $action . '">
+		<img src="' . Stratum::getURL( 'images' ) . $img . '" border="0" alt="' . $alt . '" /></a>';
 
 		return $href;
 	}
@@ -160,12 +160,12 @@ class DSCForkGrid extends JGrid
 	{
 		$img = $enable ? $imgY : $imgX;
 		$task = $enable ? 'disable' : 'enable';
-		$alt = $enable ? JText::_( 'LIB_DSCFORK_ENABLED' ) : JText::_( 'LIB_DSCFORK_DISABLED' );
-		$action = $enable ? JText::_( 'LIB_DSCFORK_DISABLE_ITEM' ) : JText::_( 'LIB_DSCFORK_ENABLE_ITEM' );
+		$alt = $enable ? JText::_( 'LIB_STRATUM_ENABLED' ) : JText::_( 'LIB_STRATUM_DISABLED' );
+		$action = $enable ? JText::_( 'LIB_STRATUM_DISABLE_ITEM' ) : JText::_( 'LIB_STRATUM_ENABLE_ITEM' );
 
 		$href = '
-		<a href="javascript:void(0);" onclick="return dscfork.listItemTask(\'cb' . $i . '\',\'' . $prefix . $task . '\')" title="' . $action . '">
-		<img src="' . DSCFork::getURL( 'images' ) . $img . '" border="0" alt="' . $alt . '" />
+		<a href="javascript:void(0);" onclick="return stratum.listItemTask(\'cb' . $i . '\',\'' . $prefix . $task . '\')" title="' . $action . '">
+		<img src="' . Stratum::getURL( 'images' ) . $img . '" border="0" alt="' . $alt . '" />
 		</a>';
 
 		return $href;
@@ -200,8 +200,8 @@ class DSCForkGrid extends JGrid
 				$text = JFactory::getUser( $row->checked_out )->username;
 				$date = JHTML::_( 'date', $row->checked_out_time, JText::_( 'DATE_FORMAT_LC1' ) );
 				$time = JHTML::_( 'date', $row->checked_out_time, '%H:%M' );
-				$hover = '<span class="editlinktip hasTip" title="' . JText::sprintf( 'LIB_DSCFORK_CHECKED_OUT_BY_NAME_ON_DATE_AT_TIME', $text, $date, $time ) . '">';
-				$checked = $hover . '<img src="' . DSCFork::getURL( 'images' ) . 'checked_out.png"/></span>';
+				$hover = '<span class="editlinktip hasTip" title="' . JText::sprintf( 'LIB_STRATUM_CHECKED_OUT_BY_NAME_ON_DATE_AT_TIME', $text, $date, $time ) . '">';
+				$checked = $hover . '<img src="' . Stratum::getURL( 'images' ) . 'checked_out.png"/></span>';
 			}
 
 		} else
@@ -218,7 +218,7 @@ class DSCForkGrid extends JGrid
 
 		$constant = 'page_tooltip_' . $key;
 		$app = JFactory::getApplication( )->input->getCmd( 'option' );
-		$defines = DSCFork::getApp( $app );
+		$defines = Stratum::getApp( $app );
 		$disabled = $defines->get( $constant . "_disabled", '0' );
 
 		$full_constant = strtoupper( $app . "_" . $constant );
@@ -229,7 +229,7 @@ class DSCForkGrid extends JGrid
 			$view = strtolower( JFactory::getApplication( )->input->getCmd( 'view' ) );
 			$task = "page_tooltip_disable";
 			$url = JRoute::_( "index.php?option={$option}&controller={$view}&view={$view}&task={$task}&key={$key}" );
-			$link = "<a href='{$url}'>" . JText::_( "LIB_DSCFORK_HIDE_THIS" ) . "</a>";
+			$link = "<a href='{$url}'>" . JText::_( "LIB_STRATUM_HIDE_THIS" ) . "</a>";
 
 			$href = '
 				<fieldset class="' . $id . '">
@@ -254,23 +254,23 @@ class DSCForkGrid extends JGrid
 		{
 			$html = "
 			<div class='note'>
-				" . JText::_( 'LIB_DSCFORK_ITEM_CHECKED_OUT_BY_YOU', $title ) . "
-				<button onclick='document.getElementById(\"task\").value=\"release\"; this.form.submit();'>" . JText::sprintf( 'LIB_DSCFORK_RELEASE_ITEM', $title ) . "</button>
+				" . JText::_( 'LIB_STRATUM_ITEM_CHECKED_OUT_BY_YOU', $title ) . "
+				<button onclick='document.getElementById(\"task\").value=\"release\"; this.form.submit();'>" . JText::sprintf( 'LIB_STRATUM_RELEASE_ITEM', $title ) . "</button>
 			</div>
 			";
 		} elseif ( !empty( $row->checked_out ) )
 		{
 			$html = "
 			<div class='note'>
-				" . sprintf( JText::sprintf( 'LIB_DSCFORK_ITEM_CHECKED_OUT_BY_SOMEONE', $title ), JFactory::getUser( @$row->checked_out )->username ) . "
+				" . sprintf( JText::sprintf( 'LIB_STRATUM_ITEM_CHECKED_OUT_BY_SOMEONE', $title ), JFactory::getUser( @$row->checked_out )->username ) . "
 			</div>
 			";
 		} else
 		{
 			$html = "
 			<div class='note'>
-				" . JText::sprintf( 'LIB_DSCFORK_ITEM_CHECKED_OUT_BY_NOBODY', $title ) . "
-				<button onclick='document.getElementById(\"task\").value=\"$lock_task\"; this.form.submit();'>" . JText::_( 'LIB_DSCFORK_LOCK_ITEM', $title ) . "</button>
+				" . JText::sprintf( 'LIB_STRATUM_ITEM_CHECKED_OUT_BY_NOBODY', $title ) . "
+				<button onclick='document.getElementById(\"task\").value=\"$lock_task\"; this.form.submit();'>" . JText::_( 'LIB_STRATUM_LOCK_ITEM', $title ) . "</button>
 			</div>
 			";
 		}
@@ -288,20 +288,20 @@ class DSCForkGrid extends JGrid
 			$date = JHTML::_( 'date', $row->checked_out_time, JText::_( 'DATE_FORMAT_LC1' ) );
 			$time = JHTML::_( 'date', $row->checked_out_time, '%H:%M' );
 
-			$hover = '<span class="editlinktip hasTip" title="' . JText::_( 'LIB_DSCFORK_ITEM_CHECKED_OUT' ) . '::' . $text . '<br />' . $date . '<br />' . $time . '">';
+			$hover = '<span class="editlinktip hasTip" title="' . JText::_( 'LIB_STRATUM_ITEM_CHECKED_OUT' ) . '::' . $text . '<br />' . $date . '<br />' . $time . '">';
 		}
-		$checked = $hover . '<img src="' . DSCFork::getURL( 'images' ) . 'checked_out.png"/></span>';
+		$checked = $hover . '<img src="' . Stratum::getURL( 'images' ) . 'checked_out.png"/></span>';
 
 		return $checked;
 	}
 
 	public static function required( $text = '', $css_suffix = '' )
 	{
-		$css_class = 'dscfork-required';
+		$css_class = 'stratum-required';
 		if ( strlen( $css_suffix ) )
 			$css_class .= $css_suffix;
 
-		$txt = 'LIB_DSCFORK_REQUIRED';
+		$txt = 'LIB_STRATUM_REQUIRED';
 		if ( strlen( $text ) )
 			$txt = $text;
 

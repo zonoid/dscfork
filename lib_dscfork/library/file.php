@@ -15,7 +15,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport( 'joomla.filesystem.file' );
 
-class DSCForkFile extends JObject
+class StratumFile extends JObject
 {
 	/**
 	 * Returns a list of types
@@ -35,7 +35,7 @@ class DSCForkFile extends JObject
 		}
 		if ( $protect )
 		{
-			$helper = new DSCForkHelper( );
+			$helper = new StratumHelper( );
 			$helper->checkDirectory( $dir );
 
 			// then confirms existence of htaccess file
@@ -46,7 +46,7 @@ class DSCForkFile extends JObject
 				$text = "deny from all";
 				if ( !JFile::write( $destination, $text ) )
 				{
-					$this->setError( JText::_( 'LIB_DSCFORK_STORAGE_DIRECTORY_IS_UNPROTECTED' ) );
+					$this->setError( JText::_( 'LIB_STRATUM_STORAGE_DIRECTORY_IS_UNPROTECTED' ) );
 					return $success;
 				}
 			}
@@ -63,7 +63,7 @@ class DSCForkFile extends JObject
 	{
 		if ( !isset( $this->_directory ) )
 		{
-			$this->_directory = DSCFork::getPath( $media );
+			$this->_directory = Stratum::getPath( $media );
 		}
 		return $this->_directory;
 	}
@@ -77,19 +77,19 @@ class DSCForkFile extends JObject
 	function handleUpload( $fieldname = 'userfile' )
 	{
 		$success = false;
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 
 		// Check if file uploads are enabled
 		if ( !(bool)ini_get( 'file_uploads' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_UPLOADS_DISABLED' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_UPLOADS_DISABLED' ) );
 			return $success;
 		}
 
 		// Check that the zlib is available
 		if ( !extension_loaded( 'zlib' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_ZLIB_UNAVAILABLE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_ZLIB_UNAVAILABLE' ) );
 			return $success;
 		}
 
@@ -98,7 +98,7 @@ class DSCForkFile extends JObject
 
 		if ( !$userfile )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_NO_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_NO_FILE' ) );
 			return $success;
 		}
 
@@ -108,7 +108,7 @@ class DSCForkFile extends JObject
 
 		if ( $userfile['size'] == 0 )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE' ) );
 			return $success;
 		}
 
@@ -117,7 +117,7 @@ class DSCForkFile extends JObject
 
 		if ( !is_uploaded_file( $userfile['tmp_name'] ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE' ) );
 			return $success;
 		} else
 		{
@@ -139,25 +139,25 @@ class DSCForkFile extends JObject
 	function handleArrayUpload( $array, $fieldname = 'logo', $key = 'userdata' )
 	{
 		$success = false;
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 
 		// Check if file uploads are enabled
 		if ( !(bool)ini_get( 'file_uploads' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_UPLOADS_DISABLED' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_UPLOADS_DISABLED' ) );
 			return $success;
 		}
 
 		// Check that the zlib is available
 		if ( !extension_loaded( 'zlib' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_ZLIB_UNAVAILABLE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_ZLIB_UNAVAILABLE' ) );
 			return $success;
 		}
 
 		if ( !$array[$key]['name'][$fieldname] )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_NO_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_NO_FILE' ) );
 			return $success;
 		}
 
@@ -167,7 +167,7 @@ class DSCForkFile extends JObject
 
 		if ( $array[$key]['size'][$fieldname] == 0 )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE' ) );
 			return $success;
 		}
 
@@ -177,7 +177,7 @@ class DSCForkFile extends JObject
 		if ( !is_uploaded_file( $array[$key]['tmp_name'][$fieldname] ) )
 		{
 
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE' ) );
 			return $success;
 		} else
 		{
@@ -218,19 +218,19 @@ class DSCForkFile extends JObject
 	function handleMultipleUpload( $fieldname = 'userfile', $num = 0 )
 	{
 		$success = false;
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 
 		// Check if file uploads are enabled
 		if ( !(bool)ini_get( 'file_uploads' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_UPLOADS_DISABLED' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_UPLOADS_DISABLED' ) );
 			return $success;
 		}
 
 		// Check that the zlib is available
 		if ( !extension_loaded( 'zlib' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_ZLIB_UNAVAILABLE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_ZLIB_UNAVAILABLE' ) );
 			return $success;
 		}
 
@@ -239,7 +239,7 @@ class DSCForkFile extends JObject
 
 		if ( !$userfile )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_NO_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_NO_FILE' ) );
 			return $success;
 		}
 
@@ -251,7 +251,7 @@ class DSCForkFile extends JObject
 
 		if ( $userfile['size'][$num] == 0 )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE' ) );
 			return $success;
 		}
 
@@ -259,14 +259,14 @@ class DSCForkFile extends JObject
 		// check size of upload against max set in config
 		if ( $this->size > $config->get( 'files_maxsize', '10000' ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE_SIZE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE_SIZE' ) );
 			return $success;
 		}
 		$this->size = number_format( $this->size, 2 ) . ' Kb';
 
 		if ( !is_uploaded_file( $userfile['tmp_name'][$num] ) )
 		{
-			$this->setError( JText::_( 'LIB_DSCFORK_INVALID_FILE' ) );
+			$this->setError( JText::_( 'LIB_STRATUM_INVALID_FILE' ) );
 			return $success;
 		} else
 		{
@@ -297,7 +297,7 @@ class DSCForkFile extends JObject
 		// save path and filename or just filename
 		if ( !JFile::upload( $this->file_path, $dest ) )
 		{
-			$this->setError( JText::sprintf( "LIB_DSCFORK_MOVE_FAILED_DESTINATION", $this->file_path, $dest ) );
+			$this->setError( JText::sprintf( "LIB_STRATUM_MOVE_FAILED_DESTINATION", $this->file_path, $dest ) );
 			return false;
 		}
 
@@ -382,7 +382,7 @@ class DSCForkFile extends JObject
 			case "htm":
 			case "html":
 				if ( $file->path )
-					die( JText::sprintf( 'LIB_DSCFORK_CANNOT_DOWNLOAD_SAID_FILES', $file->extension ) );
+					die( JText::sprintf( 'LIB_STRATUM_CANNOT_DOWNLOAD_SAID_FILES', $file->extension ) );
 
 			default:
 				$ctype = "application/octet-stream";
@@ -477,7 +477,7 @@ class DSCForkFile extends JObject
 		$handle = fopen( $filename, 'rb' );
 		if ( $handle === false )
 		{
-			JError::raiseWarning( 1, 'DSCForkFile::readfileChunked: ' . JText::_( 'LIB_DSCFORK_UNABLED_TO_OPEN_FILE' ) . ": '$filename'" );
+			JError::raiseWarning( 1, 'StratumFile::readfileChunked: ' . JText::_( 'LIB_STRATUM_UNABLED_TO_OPEN_FILE' ) . ": '$filename'" );
 			return false;
 		}
 
@@ -746,7 +746,7 @@ class DSCForkFile extends JObject
 		if ( !is_array( $instance ) )
 		{
 			$instance = array( );
-			$data = DSCForkFile::getStorageMethods( );
+			$data = StratumFile::getStorageMethods( );
 			for ( $i = 0; $i < count( $data ); $i++ )
 			{
 				$d = $data[$i];

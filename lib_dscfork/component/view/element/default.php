@@ -19,8 +19,8 @@ $javascript = 'onchange="document.adminForm.submit();"';
             </td>
             <td nowrap="nowrap">
                 <input  type="text" name="filter" value="<?php echo @$state->filter; ?>" />
-                <button class="btn btn-primary" onclick="this.form.submit();"><?php echo JText::_('LIB_DSCFORK_SEARCH'); ?></button>
-                <button class="btn btn-danger" onclick="dscfork.formReset(this.form);"><?php echo JText::_('LIB_DSCFORK_RESET'); ?></button>
+                <button class="btn btn-primary" onclick="this.form.submit();"><?php echo JText::_('LIB_STRATUM_SEARCH'); ?></button>
+                <button class="btn btn-danger" onclick="stratum.formReset(this.form);"><?php echo JText::_('LIB_STRATUM_RESET'); ?></button>
             </td>
         </tr>
     </table>
@@ -32,10 +32,10 @@ $javascript = 'onchange="document.adminForm.submit();"';
                     <?php echo JText::_("Num"); ?>
                 </th>
                 <th style="width: 50px;">
-                    <?php echo DSCForkGrid::sort( 'ID', "tbl." . $keyname, @$state->direction, @$state->order ); ?>
+                    <?php echo StratumGrid::sort( 'ID', "tbl." . $keyname, @$state->direction, @$state->order ); ?>
                 </th>
                 <th style="text-align: left;">
-                    <?php echo DSCForkGrid::sort( ucfirst($title_key), "tbl." . $title_key, @$state->direction, @$state->order ); ?>
+                    <?php echo StratumGrid::sort( ucfirst($title_key), "tbl." . $title_key, @$state->direction, @$state->order ); ?>
                 </th>
             </tr>
         </thead>
@@ -52,12 +52,12 @@ $javascript = 'onchange="document.adminForm.submit();"';
             <tr>
                 <td style="text-align: center;"><?php echo $i++; ?></td>
                 <td style="text-align: center;">
-                    <a style="cursor: pointer;" onclick="window.parent.dscfork.select<?php echo $model->getName(); ?>('<?php echo $item->$keyname; ?>', '<?php echo str_replace(array("'", "\""), array("\\'", ""), $item->$title_key); ?>', '<?php echo $this->object; ?>');">
+                    <a style="cursor: pointer;" onclick="window.parent.stratum.select<?php echo $model->getName(); ?>('<?php echo $item->$keyname; ?>', '<?php echo str_replace(array("'", "\""), array("\\'", ""), $item->$title_key); ?>', '<?php echo $this->object; ?>');">
                         <?php echo $item->$keyname; ?>
                     </a>
                 </td>
                 <td style="text-align: left;">
-                    <a style="cursor: pointer;" onclick="window.parent.dscfork.select<?php echo $model->getName(); ?>('<?php echo $item->$keyname; ?>', '<?php echo str_replace(array("'", "\""), array("\\'", ""), $item->$title_key); ?>', '<?php echo $this->object; ?>');">
+                    <a style="cursor: pointer;" onclick="window.parent.stratum.select<?php echo $model->getName(); ?>('<?php echo $item->$keyname; ?>', '<?php echo str_replace(array("'", "\""), array("\\'", ""), $item->$title_key); ?>', '<?php echo $this->object; ?>');">
                         <?php echo $item->$title_key; ?>
                     </a>
                 </td>
@@ -67,7 +67,7 @@ $javascript = 'onchange="document.adminForm.submit();"';
             <?php if (!count(@$items)) : ?>
             <tr>
                 <td colspan="10" align="center">
-                    <?php echo JText::_('LIB_DSCFORK_NO_ITEMS_FOUND'); ?>
+                    <?php echo JText::_('LIB_STRATUM_NO_ITEMS_FOUND'); ?>
                 </td>
             </tr>
             <?php endif; ?>

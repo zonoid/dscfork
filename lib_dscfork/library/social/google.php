@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkSocialGoogle extends DSCForkSocial
+class StratumSocialGoogle extends StratumSocial
 {
 
 	function sharebutton( $url = NULL )

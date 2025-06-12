@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkArticle extends JObject
+class StratumArticle extends JObject
 {
 	/**
 	 * Takes a simple description an formats it like an article

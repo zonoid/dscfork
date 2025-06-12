@@ -18,7 +18,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.plugin.plugin' );
 jimport( 'joomla.utilities.string' );
 
-class DSCForkPlugin extends JPlugin
+class StratumPlugin extends JPlugin
 {
 	/**
 	 * @var $_element  string  Should always correspond with the plugin's filename,
@@ -116,7 +116,7 @@ class DSCForkPlugin extends JPlugin
 	{
 		if ( empty( $group ) )
 		{
-			$app = DSCFork::getApp( );
+			$app = Stratum::getApp( );
 			$com_name = $app->getName( );
 			$group = str_replace( 'com_', '', $com_name );
 			if ( empty( $group ) )
@@ -180,7 +180,7 @@ class DSCForkPlugin extends JPlugin
 		$articleid = $this->params->get( 'articleid' );
 		if ( $articleid )
 		{
-			$html = DSCForkArticle::display( $articleid );
+			$html = StratumArticle::display( $articleid );
 		}
 
 		return $html;

@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkControllerSite extends DSCForkController
+class StratumControllerSite extends StratumController
 {
 	var $_models = array( );
 	var $message = "";
@@ -49,7 +49,7 @@ class DSCForkControllerSite extends DSCForkController
 	function footer( )
 	{
 		// show a generous linkback, TIA
-		$app = DSCFork::getApp( );
+		$app = Stratum::getApp( );
 		$show_linkback = $app->get( 'show_linkback', '1' );
 		$name = $app->getName( );
 		$model_name = $name . "ModelDashboard";

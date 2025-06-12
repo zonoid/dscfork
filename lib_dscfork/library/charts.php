@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkCharts extends JObject
+class StratumCharts extends JObject
 {
 
 	/**
@@ -21,13 +21,13 @@ class DSCForkCharts extends JObject
 	 *
 	 * @access public
 	 * @param mixed $data
-	 * @param string $title. (default: 'A DSCFork Google Chart')
+	 * @param string $title. (default: 'A Stratum Google Chart')
 	 * @param string $type. (default: 'Column')
 	 * @param int $width. (default: 900)
 	 * @param int $height. (default: 250)
 	 * @return void
 	 */
-	public static function renderGoogleChart( $data, $title = 'A DSCFork Google Chart', $type = 'Column', $width = 800, $height = 250 )
+	public static function renderGoogleChart( $data, $title = 'A Stratum Google Chart', $type = 'Column', $width = 800, $height = 250 )
 	{
 		$title = JText::_( $title );
 

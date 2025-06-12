@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperCurrency extends DSCForkHelper
+class StratumHelperCurrency extends StratumHelper
 {
 	/**
 	 * Format and convert a number according to currency rules
@@ -25,7 +25,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 	public static function _( $amount, $currency = '', $options = '' )
 	{
 		// default to whatever is in config
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 		$options = (array)$options;
 
 		$default_currencyid = $config->get( 'default_currencyid', '1' );
@@ -36,7 +36,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		$post = isset( $options['post'] ) ? $options['post'] : $config->get( 'currency_symbol_post', '' );
 
 		// Now check the session variable to see if there is a currency setting there
-		$session_currency = DSCForkHelper::getSessionVariable( 'currency_id', 0 );
+		$session_currency = StratumHelper::getSessionVariable( 'currency_id', 0 );
 		if ( $session_currency )
 		{
 			// Let the code below deal with currency loading
@@ -60,7 +60,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		{
 			// TODO if currency is an integer, load the object for its id
 			JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_' . $config->getName( ) . '/tables' );
-			$table = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$table = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$table->load( (int)$currency );
 			if ( !empty( $table->currency_id ) )
 			{
@@ -79,7 +79,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		{
 			// TODO if currency is a string (currency_code) load the object for its code
 			JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_' . $config->getName( ) . '/tables' );
-			$table = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$table = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$keynames = array( );
 			$keynames['currency_code'] = (string)$currency;
 			$table->load( $keynames );
@@ -102,10 +102,10 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		if ( !empty( $convertTo ) )
 		{
 			JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_' . $config->getName( ) . '/tables' );
-			$table = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$table = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$table->load( (int)$default_currencyid );
-			DSCFork::load( 'DSCForkHelperCurrency', 'helpers.currency' );
-			$amount = DSCForkHelperCurrency::convert( $table->currency_code, $convertTo, $amount );
+			Stratum::load( 'StratumHelperCurrency', 'helpers.currency' );
+			$amount = StratumHelperCurrency::convert( $table->currency_code, $convertTo, $amount );
 		}
 
 		$return = $pre . number_format( $amount, $num_decimals, $decimal, $thousands ) . $post;
@@ -138,7 +138,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		if ( empty( $rates[$currencyFrom][$currencyTo] ) )
 		{
 			// get the exchange rate, and let the getexchange rate method handle refreshing the cache
-			$rates[$currencyFrom][$currencyTo] = DSCForkHelperCurrency::getExchangeRate( $currencyFrom, $currencyTo, $refresh );
+			$rates[$currencyFrom][$currencyTo] = StratumHelperCurrency::getExchangeRate( $currencyFrom, $currencyTo, $refresh );
 		}
 		$exchange_rate = $rates[$currencyFrom][$currencyTo];
 
@@ -157,7 +157,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 	 */
 	function getExchangeRate( $currencyFrom, $currencyTo = 'USD', $refresh = false )
 	{
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 		JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_' . $config->getName( ) . '/tables' );
 
 		$date = JFactory::getDate( );
@@ -169,7 +169,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		if ( $currencyTo == 'USD' )
 		{
 			// get from DB table
-			$tableFrom = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$tableFrom = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$tableFrom->load( array( 'currency_code' => $currencyFrom ) );
 			if ( !empty( $tableFrom->currency_id ) )
 			{
@@ -184,7 +184,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 							$tableFrom->exchange_rate = (float)1.0;
 						} else
 						{
-							$tableFrom->exchange_rate = DSCForkHelperCurrency::getExchangeRateYahoo( $currencyFrom, $currencyTo );
+							$tableFrom->exchange_rate = StratumHelperCurrency::getExchangeRateYahoo( $currencyFrom, $currencyTo );
 						}
 						$tableFrom->updated_date = $now;
 						$tableFrom->save( );
@@ -195,7 +195,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 			} else
 			{
 				// invalid currency, fail
-				JError::raiseError( '1', JText::_( "LIB_DSCFORK_INVALID_CURRENCY_TYPE" ) );
+				JError::raiseError( '1', JText::_( "LIB_STRATUM_INVALID_CURRENCY_TYPE" ) );
 				return;
 			}
 		}
@@ -203,12 +203,12 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		// Auto Update Enabled?
 		if ( $config->get( 'currency_exchange_autoupdate', 1 ) )
 		{
-			$exchange_rate = DSCForkHelperCurrency::getExchangeRateYahoo( $currencyFrom, $currencyTo );
+			$exchange_rate = StratumHelperCurrency::getExchangeRateYahoo( $currencyFrom, $currencyTo );
 		} else
 		{
 			// get from DB table
-			$tableFrom = JTable::getInstance( 'Currencies', 'DSCForkTable' );
-			$tableTo = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$tableFrom = JTable::getInstance( 'Currencies', 'StratumTable' );
+			$tableTo = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$tableFrom->load( array( 'currency_code' => $currencyFrom ) );
 			$tableTo->load( array( 'currency_code' => $currencyTo ) );
 
@@ -221,7 +221,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 			} else
 			{
 				// invalid currency, fail
-				JError::raiseError( '1', JText::_( "LIB_DSCFORK_INVALID_CURRENCY_TYPE" ) );
+				JError::raiseError( '1', JText::_( "LIB_STRATUM_INVALID_CURRENCY_TYPE" ) );
 				return;
 			}
 		}
@@ -277,7 +277,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 	function format( $amount, $currency = '', $options = '' )
 	{
 		// default to whatever is in config
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 		$options = (array)$options;
 
 		$num_decimals = isset( $options['num_decimals'] ) ? $options['num_decimals'] : $config->get( 'currency_num_decimals', '2' );
@@ -287,7 +287,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		$post = isset( $options['post'] ) ? $options['post'] : $config->get( 'currency_symbol_post', '' );
 
 		// Now check the session variable to see if there is a currency setting there
-		$session_currency = DSCForkHelper::getSessionVariable( 'currency_id', 0 );
+		$session_currency = StratumHelper::getSessionVariable( 'currency_id', 0 );
 		if ( $session_currency )
 		{
 			// Let the code below deal with currency loading
@@ -307,7 +307,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		{
 			// TODO if currency is an integer, load the object for its id
 			JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_' . $config->getName( ) . '/tables' );
-			$table = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$table = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$table->load( (int)$currency );
 			if ( !empty( $table->currency_id ) )
 			{
@@ -321,7 +321,7 @@ class DSCForkHelperCurrency extends DSCForkHelper
 		{
 			// TODO if currency is a string (currency_code) load the object for its code
 			JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_' . $config->getName( ) . '/tables' );
-			$table = JTable::getInstance( 'Currencies', 'DSCForkTable' );
+			$table = JTable::getInstance( 'Currencies', 'StratumTable' );
 			$keynames = array( );
 			$keynames['currency_code'] = (string)$currency;
 			$table->load( $keynames );

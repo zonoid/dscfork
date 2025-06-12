@@ -13,9 +13,9 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkTableContent extends DSCForkTable
+class StratumTableContent extends StratumTable
 {
-	function DSCForkTableContent( &$db )
+	function StratumTableContent( &$db )
 	{
 		$tbl_key = 'id';
 		$tbl_suffix = 'content';

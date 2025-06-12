@@ -11,13 +11,13 @@
 
 defined( '_JEXEC' ) or die ;
 
-class DSCFork extends JObject
+class Stratum extends JObject
 {
-	protected $_name = 'dscfork';
-	protected $_version = '1.0.0';
+	protected $_name = 'stratum';
+	protected $_version = '5.0.0';
 	protected $_build = '';
 	protected $_versiontype = '';
-	protected $_copyrightyear = '2015';
+	protected $_copyrightyear = '2024';
 	protected $_min_php = '5.3';
 
 	/**
@@ -105,7 +105,7 @@ class DSCFork extends JObject
 		//if it doesn't pass raise a Joomla Notice
 		if( !$passes )
 		:
-			JError::raiseNotice( 'VERSION_ERROR', sprintf( JText::_( 'ERROR_PHP_VERSION' ), $minV, $phpV ) );
+			// TODO: Update JError::raiseNotice for J4/5: JError::raiseNotice( 'VERSION_ERROR', sprintf( JText::_( 'ERROR_PHP_VERSION' ), $minV, $phpV ) );
 		endif;
 
 		//return minimum PHP version
@@ -121,7 +121,7 @@ class DSCFork extends JObject
 	{
 		if( empty( $app ) && empty( $find ) )
 		{
-			return new DSCFork( );
+			return new Stratum( );
 		}
 
 		if( empty( $app ) && !empty( $find ) )
@@ -171,7 +171,7 @@ class DSCFork extends JObject
 	 */
 	public static function getURL( $type = 'media', $com = '' )
 	{
-		$name = 'dscfork';
+		$name = 'stratum';
 		if( !empty( $com ) )
 		{
 			$app = self::getApp( $com );
@@ -207,7 +207,7 @@ class DSCFork extends JObject
 	 */
 	public static function getPath( $type = 'media', $com = '' )
 	{
-		$name = 'dscfork';
+		$name = 'stratum';
 		if( !empty( $com ) )
 		{
 			$app = self::getApp( $com );
@@ -241,31 +241,31 @@ class DSCFork extends JObject
 	 */
 	public static function loadLibrary( $load_js = true )
 	{
-		if( !class_exists( 'DSCForkLoader' ) )
+		if( !class_exists( 'StratumLoader' ) )
 		{
 			jimport( 'joomla.filesystem.file' );
-			if( !JFile::exists( JPATH_SITE . '/libraries/dscfork/loader.php' ) )
+			if( !JFile::exists( JPATH_SITE . '/libraries/stratum/loader.php' ) )
 			{
 				return false;
 			}
-			require_once JPATH_SITE . '/libraries/dscfork/loader.php';
+			require_once JPATH_SITE . '/libraries/stratum/loader.php';
 		}
 
-		if( !defined( '_DSCFork' ) )
+		if( !defined( '_Stratum' ) )
 		{
-			define( '_DSCFork', 1 );
+			define( '_Stratum', 1 );
 
-			$parentPath = JPATH_SITE . '/libraries/dscfork/library';
-			DSCForkLoader::discover( 'DSCFork', $parentPath, true );
+			$parentPath = JPATH_SITE . '/libraries/stratum/library';
+			StratumLoader::discover( 'Stratum', $parentPath, true );
 
-			$autoloader = new DSCForkLoader( );
+			$autoloader = new StratumLoader( );
 
 			if( $load_js )
 			{
 				$doc = JFactory::getDocument( );
 				$uri = JURI::getInstance( );
-				$js = "dscfork.jbase = '" . $uri->root( ) . "';\n";
-				$doc->addScript( DSCFork::getURL( 'js' ) . 'common.js' );
+				$js = "stratum.jbase = '" . $uri->root( ) . "';\n";
+				$doc->addScript( Stratum::getURL( 'js' ) . 'common.js' );
 				$doc->addScriptDeclaration( $js );
 			}
 		}
@@ -285,20 +285,20 @@ class DSCFork extends JObject
 		if( $loaded )
 			return;
 
-		jimport( 'dscfork.highroller.highroller.highroller' );
-		jimport( 'dscfork.highroller.highroller.highrollerareachart' );
-		jimport( 'dscfork.highroller.highroller.highrollerareasplinechart' );
-		jimport( 'dscfork.highroller.highroller.highrollerbarchart' );
-		jimport( 'dscfork.highroller.highroller.highrollercolumnchart' );
-		jimport( 'dscfork.highroller.highroller.highrollerlinechart' );
-		jimport( 'dscfork.highroller.highroller.highrollerpiechart' );
-		jimport( 'dscfork.highroller.highroller.highrollerscatterchart' );
-		jimport( 'dscfork.highroller.highroller.highrollerseriesdata' );
-		jimport( 'dscfork.highroller.highroller.highrollersplinechart' );
+		jimport( 'stratum.highroller.highroller.highroller' );
+		jimport( 'stratum.highroller.highroller.highrollerareachart' );
+		jimport( 'stratum.highroller.highroller.highrollerareasplinechart' );
+		jimport( 'stratum.highroller.highroller.highrollerbarchart' );
+		jimport( 'stratum.highroller.highroller.highrollercolumnchart' );
+		jimport( 'stratum.highroller.highroller.highrollerlinechart' );
+		jimport( 'stratum.highroller.highroller.highrollerpiechart' );
+		jimport( 'stratum.highroller.highroller.highrollerscatterchart' );
+		jimport( 'stratum.highroller.highroller.highrollerseriesdata' );
+		jimport( 'stratum.highroller.highroller.highrollersplinechart' );
 
 		JHtml::_( 'jquery.framework' );
 
-		JHTML::_( 'script', 'highcharts.js', 'libraries/dscfork/highroller/highcharts/' );
+		JHTML::_( 'script', 'highcharts.js', 'libraries/stratum/highroller/highcharts/' );
 		$load = false;
 	}
 
@@ -488,7 +488,7 @@ class DSCFork extends JObject
 	 * @param array  $options
 	 * @return boolean
 	 */
-	public static function load( $classname, $filepath = 'library', $options = array( 'site'=>'site', 'type'=>'libraries', 'ext'=>'dscfork' ) )
+	public static function load( $classname, $filepath = 'library', $options = array( 'site'=>'site', 'type'=>'libraries', 'ext'=>'stratum' ) )
 	{
 		$classname = strtolower( $classname );
 		$classes = JLoader::getClassList( );
@@ -552,16 +552,16 @@ class DSCFork extends JObject
 	/**
 	 * Intelligently loads instances of classes in framework
 	 *
-	 * Usage: $object = DSCFork::getClass( 'DSCForkHelperCarts', 'helpers.carts' );
-	 * Usage: $suffix = DSCFork::getClass( 'DSCForkHelperCarts', 'helpers.carts' )->getSuffix();
-	 * Usage: $categories = DSCFork::getClass( 'DSCForkSelect', 'select' )->category( $selected );
+	 * Usage: $object = Stratum::getClass( 'StratumHelperCarts', 'helpers.carts' );
+	 * Usage: $suffix = Stratum::getClass( 'StratumHelperCarts', 'helpers.carts' )->getSuffix();
+	 * Usage: $categories = Stratum::getClass( 'StratumSelect', 'select' )->category( $selected );
 	 *
 	 * @param string $classname   The class name
 	 * @param string $filepath    The filepath ( dot notation )
 	 * @param array  $options
 	 * @return object of requested class (if possible), else a new JObject
 	 */
-	public static function getClass( $classname, $filepath = 'library', $options = array( 'site'=>'site', 'type'=>'libraries', 'ext'=>'dscfork' ) )
+	public static function getClass( $classname, $filepath = 'library', $options = array( 'site'=>'site', 'type'=>'libraries', 'ext'=>'stratum' ) )
 	{
 		if( self::load( $classname, $filepath, $options ) )
 		{
@@ -594,7 +594,7 @@ class DSCFork extends JObject
 		if( empty( $this->_data ) )
 		{
 			$this->_data = '';
-			$database = JFactory::getDBO( );
+			$database = JFactory::getDbo( );
 			if( $query = $this->_buildQuery( ) )
 			{
 				$database->setQuery( $query );
@@ -654,9 +654,10 @@ class DSCFork extends JObject
 	 */
 	public function isComponentInstalled( $option )
 	{
+		// TODO: Review this query for J4/5 compatibility, especially table name and field names for extensions.
 		// Joomla! 1.6+ code here
-		$db = JFactory::getDBO( );
-		$q = new DSCForkQuery( );
+		$db = JFactory::getDbo( );
+		$q = new StratumQuery( );
 		$q->select( 'extension_id' );
 		$q->from( '#__extensions' );
 		$q->where( 'type = \'component\'' );

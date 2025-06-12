@@ -1,40 +1,40 @@
 /*-------------------------------------------
  Common
  -------------------------------------------*/
-.dscfork-hidden {
+.stratum-hidden {
 	display: none;
 }
 
-.dscfork-no-float {
+.stratum-no-float {
 	float: none;
 }
 
-.dscfork-right {
+.stratum-right {
 	float: right;
 }
 
-.dscfork-left {
+.stratum-left {
 	float: left;
 }
 
-.dscfork-clear {
+.stratum-clear {
 	clear: both;
 }
 
-.dscfork-full {
+.stratum-full {
 	width: 100%;
 }
 
-.dscfork-half {
+.stratum-half {
 	width: 48.5%;
 }
 
-.dscfork-clearfix {
+.stratum-clearfix {
 	*zoom: 1;
 }
 
-.dscfork-clearfix:before, 
-.dscfork-clearfix:after {
+.stratum-clearfix:before,
+.stratum-clearfix:after {
 	display: table;
 	content: "";
 	line-height: 0;
@@ -42,95 +42,95 @@
 
 
 
-.dscfork-clearfix:after {
+.stratum-clearfix:after {
 	clear: both;
 }
 
-.dscfork-flat li {
+.stratum-flat li {
 	float: left;
 }
 
-.dscfork-flat.pad-left li {
+.stratum-flat.pad-left li {
 	padding-left: 5px;
 }
 
-.dscfork-flat.pad-right li {
+.stratum-flat.pad-right li {
 	padding-right: 5px;
 }
 
-.dscfork-center {
+.stratum-center {
 	margin: 0 auto;
 }
 
-.dscfork-text-center {
+.stratum-text-center {
 	text-align: center;
 }
 
-.dscfork-text-right {
+.stratum-text-right {
 	text-align: right;
 }
 
-.dscfork-table {
+.stratum-table {
 	display: table;
 }
 
-.dscfork-row {
+.stratum-row {
 	display: table-row;
 	clear: both;
 }
 
-.dscfork-cell {
+.stratum-cell {
 	display: table-cell;
 	padding: 2px;
 	vertical-align: top;
 }
 
-.dscfork-table .dscfork-row .dscfork-cell.dscfork-key {
+.stratum-table .stratum-row .stratum-cell.stratum-key {
 	padding-right: 20px;
 	padding-top: 7px;
 	vertical-align: top;
 }
 
-.dscfork-table .dscfork-row .dscfork-cell.dscfork-value {
+.stratum-table .stratum-row .stratum-cell.stratum-value {
 	vertical-align: bottom;
 }
 
-.dscfork-table .dscfork-order {
+.stratum-table .stratum-order {
 	width: 200px;
 }
 
-.dscfork-key {
+.stratum-key {
 	font-size: 120%;
 	font-weight: bold;
 	width: 200px;
 }
 
-p.dscfork-tip {
+p.stratum-tip {
 	color: #525252;
 	margin: 2px 0px 0px 0px;
 	padding: 0px;
 }
 
-.dscfork-small {
+.stratum-small {
 	font-size: 75%;
 }
 
-.dscfork-large {
+.stratum-large {
 	font-size: 125%;
 }
 
-.dscfork-grid-sort {
+.stratum-grid-sort {
 	padding-left: 3px;
 }
 
-.dscfork-required {
+.stratum-required {
 	display: inline;
 	width: 16px;
 	height: 16px;
 	background: url(../images/required_16.png);
 }
 
-.dscfork-hidden, .dscfork-content-left {
+.stratum-hidden, .stratum-content-left {
 	position: absolute;
 	left: -100000em;
 	height: 1px;
@@ -138,26 +138,26 @@ p.dscfork-tip {
 	display: none;
 }
 
-#dscfork-container .dscfork-pad-none {
+#stratum-container .stratum-pad-none {
 	padding: 0;
 }
 
-#dscfork-container .dscfork-margin-none {
+#stratum-container .stratum-margin-none {
 	margin: 0;
 }
 
-#dscfork-container .dscfork-header::before, #dscfork-container .dscfork-header::after {
+#stratum-container .stratum-header::before, #stratum-container .stratum-header::after {
     content: "";
     display: table;
     line-height: 0;
 }
 
-#dscfork-container .dscfork-header::after {
+#stratum-container .stratum-header::after {
     clear: both;
 }
 
 
-#dscfork-container .dscfork-header {
+#stratum-container .stratum-header {
 	background: none repeat scroll 0 0 #1e5d87;
     border: 0 none;   
     box-shadow: none;
@@ -168,18 +168,18 @@ p.dscfork-tip {
     position: relative;
 }
 
-#dscfork-container h2.app-title {
+#stratum-container h2.app-title {
     font-size: 26px;
     font-weight: normal;
 }
 
-#dscfork-container .dscfork-logo img.app-logo {
+#stratum-container .stratum-logo img.app-logo {
     height: 40px;
     padding: 10px 0;
     width: auto;
 }
 
-#dscfork-container div.container-fluid div.container-inner {
+#stratum-container div.container-fluid div.container-inner {
 	padding: 0 10px;
 }
 
@@ -188,25 +188,25 @@ div.container-fluid {
     padding-right: 0;*/
 }
 
-#dscfork-container div.dscfork-main {
+#stratum-container div.stratum-main {
 	background: none repeat scroll 0 0 #fcfcfc;
     padding: 12px 20px 24px;
     position: relative;
 }
 
-#dscfork-container .app-header {
+#stratum-container .app-header {
 	border-bottom: 1px solid #eee;
 }
 
-#dscfork-container .dscfork-main .app-header:first-child {
+#stratum-container .stratum-main .app-header:first-child {
     margin: 0 0 12px;
 }
 
-.dscfork-admin-wrapper {
+.stratum-admin-wrapper {
 	position: relative;
 }
 
-#dscfork-container .dscfork-main {
+#stratum-container .stratum-main {
     margin-left: 190px;
     margin-right: 0;
     margin-top: 0;
@@ -217,7 +217,7 @@ div.container-fluid {
 /*-------------------------------------------
  Self-clearing Floats
  -------------------------------------------*/
-.dscfork-clear:after, .dscfork-wrap:after, .dscfork-flat:after {
+.stratum-clear:after, .stratum-wrap:after, .stratum-flat:after {
 	clear: both;
 	content: '';
 	height: 0;
@@ -226,26 +226,26 @@ div.container-fluid {
 	display: block;
 }
 
-.dscfork-clear, .dscfork-wrap, .dscfork-flat {
+.stratum-clear, .stratum-wrap, .stratum-flat {
 	zoom: 1;
 }
 
 /**
  * 	Button toolbar override
  */
-#dscfork-container #toolbar.btn-toolbar .btn{
+#stratum-container #toolbar.btn-toolbar .btn{
 	background: none repeat scroll 0 0 #F8F8F8 !important;
     border: 1px solid #DDDDDD !important;
     padding: 3px 12px !important;
     color: #000 !important;
 }
 
-#dscfork-container #toolbar.btn-toolbar .btn:hover{
+#stratum-container #toolbar.btn-toolbar .btn:hover{
 	background: none repeat scroll 0 0 #EEEEEE !important;
 }
 
 /* button success*/
-#dscfork-container #toolbar.btn-toolbar .btn.btn-success{
+#stratum-container #toolbar.btn-toolbar .btn.btn-success{
 	background: none repeat scroll 0 0 #87B87F !important;
     border: 1px solid #87B87F !important;
     padding: 4px 12px !important;
@@ -258,15 +258,15 @@ div.container-fluid {
 }
 
 /*save button*/
-#dscfork-container #toolbar #toolbar-save .btn, 
-#dscfork-container #toolbar-save .btn {
+#stratum-container #toolbar #toolbar-save .btn,
+#stratum-container #toolbar-save .btn {
     background: none repeat scroll 0 0 #87B87F !important;
     border: 1px solid #87B87F !important;
     color: #FFFFFF !important;
     text-shadow: none !important;
 }
-#dscfork-container #toolbar #toolbar-save .btn:hover, 
-#dscfork-container #toolbar-save .btn:hover{
+#stratum-container #toolbar #toolbar-save .btn:hover,
+#stratum-container #toolbar-save .btn:hover{
 	background: none repeat scroll 0 0 #629B58 !important;
 }
 

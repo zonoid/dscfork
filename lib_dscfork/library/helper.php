@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.filesystem.folder');
 
-class DSCForkHelper extends JObject
+class StratumHelper extends JObject
 {   
 	/**
 	 * Returns a reference to the a Helper object, only creating it if it doesn't already exist
@@ -154,7 +154,7 @@ class DSCForkHelper extends JObject
      */
     public static function currency($amount, $currency='', $options='')
     {
-        $amount = DSCForkHelperCurrency::_($amount, $currency, $options);
+        $amount = StratumHelperCurrency::_($amount, $currency, $options);
         return $amount;
     }
 	
@@ -167,7 +167,7 @@ class DSCForkHelper extends JObject
 	{
         // default to whatever is in config
             
-        $config = DSCFork::getApp();
+        $config = Stratum::getApp();
         $dim_unit = $config->get('dimensions_unit', 'cm');
         $weight_unit = $config->get('weight_unit', 'kg');
             
@@ -187,7 +187,7 @@ class DSCForkHelper extends JObject
 	 */
     public static function number($number, $options='' )
 	{
-		$config = DSCFork::getApp();
+		$config = Stratum::getApp();
         $options = (array) $options;
         
         $thousands = isset($options['thousands']) ? $options['thousands'] : $config->get('number_thousands', ',');
@@ -540,7 +540,7 @@ class DSCForkHelper extends JObject
 
 				// grab all records
 				// TODO Set the query here			
-					$query = new DSCForkQuery();						
+					$query = new StratumQuery();
 					//$query->clear();
 					$query->select( $select );
 					
@@ -573,8 +573,8 @@ class DSCForkHelper extends JObject
 	 */
 	function includeMultiFile()
 	{
-		JHTML::_('script', 'Stickman.MultiUpload.js', 'media/dscfork/js/');
-		JHTML::_('stylesheet', 'Stickman.MultiUpload.css', 'media/dscfork/css/');
+		JHTML::_('script', 'Stickman.MultiUpload.js', 'media/stratum/js/');
+		JHTML::_('stylesheet', 'Stickman.MultiUpload.css', 'media/stratum/css/');
 	}
 	
 	/**
@@ -588,7 +588,7 @@ class DSCForkHelper extends JObject
 	{
 		$html = '
 		<dl id="system-message">
-            <dt class="notice">'.JText::_( "LIB_DSCFORK_NOTICE" ).'</dt>
+            <dt class="notice">'.JText::_( "LIB_STRATUM_NOTICE" ).'</dt>
             <dd class="notice message fade">
                 <ul>';
 				

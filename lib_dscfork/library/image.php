@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkImage extends DSCForkFile
+class StratumImage extends StratumFile
 {
 	var $image;
 	var $type;
@@ -29,7 +29,7 @@ class DSCForkImage extends DSCForkFile
 		{
 			if ( !JFile::exists( $filename ) )
 			{
-				$this->setError( JText::_( 'LIB_DSCFORK_IMAGE_DOES_NOT_EXIST' ) );
+				$this->setError( JText::_( 'LIB_STRATUM_IMAGE_DOES_NOT_EXIST' ) );
 				return;
 			}
 
@@ -65,7 +65,7 @@ class DSCForkImage extends DSCForkFile
 			$dir = $this->getDirectory( );
 		}
 
-		$helper = new DSCForkHelper( );
+		$helper = new StratumHelper( );
 		$helper->checkDirectory( $dir );
 		$this->_directory = $dir;
 		return $this->_directory;
@@ -112,19 +112,19 @@ class DSCForkImage extends DSCForkFile
 		{
 			if ( !$success = imagejpeg( $this->image, null ) )
 			{
-				$this->setError( "DSCForkImage::save( 'jpeg' ) Failed" );
+				$this->setError( "StratumImage::save( 'jpeg' ) Failed" );
 			}
 		} elseif ( $image_type == IMAGETYPE_GIF )
 		{
 			if ( !$success = imagegif( $this->image, null ) )
 			{
-				$this->setError( "DSCForkImage::save( 'gif' ) Failed" );
+				$this->setError( "StratumImage::save( 'gif' ) Failed" );
 			}
 		} elseif ( $image_type == IMAGETYPE_PNG )
 		{
 			if ( !$success = imagepng( $this->image, null ) )
 			{
-				$this->setError( "DSCForkImage::save( 'png' ) Failed" );
+				$this->setError( "StratumImage::save( 'png' ) Failed" );
 			}
 		}
 
@@ -135,7 +135,7 @@ class DSCForkImage extends DSCForkFile
 
 			if ( !JFile::write( $filename, $imgToWrite ) )
 			{
-				$this->setError( JText::sprintf( "LIB_DSCFORK_COULD_NOT_WRITE_FILE", $filename ) );
+				$this->setError( JText::sprintf( "LIB_STRATUM_COULD_NOT_WRITE_FILE", $filename ) );
 				return false;
 			}
 
@@ -309,7 +309,7 @@ class DSCForkImage extends DSCForkFile
 			$dest_dir = $thumb_path;
 		}
 
-		$helper = new DSCForkHelper( );
+		$helper = new StratumHelper( );
 		$helper->checkDirectory( $dest_dir );
 
 		if ( $width >= $height )
@@ -339,8 +339,8 @@ class DSCForkImage extends DSCForkFile
 			return;
 
 		JHtml::_( 'jquery.framework' );
-		JHTML::_( 'script', 'jquery.uploadifive.min.js', 'media/dscfork/js/' );
-		JHTML::_( 'stylesheet', 'uploadifive.css', 'media/dscfork/css/' );
+		JHTML::_( 'script', 'jquery.uploadifive.min.js', 'media/stratum/js/' );
+		JHTML::_( 'stylesheet', 'uploadifive.css', 'media/stratum/css/' );
 		$loaded = true;
 	}
 
@@ -349,7 +349,7 @@ class DSCForkImage extends DSCForkFile
 
 		$html = '<div id="' . $queue . '"></div>';
 		$html .= '<input id="' . $id . '" name="' . $name . '" type="file" multiple="' . $multiple . '">';
-		$html .= '<a style="position: relative; top: 8px;" href="javascript:jQuery(\'#' . $id . '\').uploadifive(\'upload\')">' . JText::_( 'LIB_DSCFORK_UPLOAD_FILES' ) . '</a>';
+		$html .= '<a style="position: relative; top: 8px;" href="javascript:jQuery(\'#' . $id . '\').uploadifive(\'upload\')">' . JText::_( 'LIB_STRATUM_UPLOAD_FILES' ) . '</a>';
 		$timestamp = time( );
 		$salt = md5( 'unique_salt' . $timestamp );
 		$js = "

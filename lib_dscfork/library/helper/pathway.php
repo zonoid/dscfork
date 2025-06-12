@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperPathway extends DSCForkHelper
+class StratumHelperPathway extends StratumHelper
 {
 	/**
 	 * Adds items to the pathway if they aren't already present
@@ -60,7 +60,7 @@ class DSCForkHelperPathway extends DSCForkHelper
 		// $new_pathway now has the pathway UP TO where we should inject the category pathway
 		/*  foreach ($items as $item)
 		 {
-		 $category_itemid = (!empty($item_id)) ? $item_id : DSCFork::getClass( "DSCForkHelperRoute", 'helpers.route' )->category( $item->id, true );
+		 $category_itemid = (!empty($item_id)) ? $item_id : Stratum::getClass( "StratumHelperRoute", 'helpers.route' )->category( $item->id, true );
 		 $item->link .= "&Itemid=".$category_itemid;
 		 $new_pathway[] = $item;
 		 }

@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperUser extends DSCForkHelper
+class StratumHelperUser extends StratumHelper
 {
 	/**
 	 *
@@ -135,7 +135,7 @@ class DSCForkHelperUser extends DSCForkHelper
 			return $success;
 		}
 
-		$app = DSCFork::getApp( );
+		$app = Stratum::getApp( );
 		if ( !$app->get( 'disable_guest_signup_email' ) )
 		{
 			// Send registration confirmation mail
@@ -243,11 +243,11 @@ class DSCForkHelperUser extends DSCForkHelper
 	 */
 	private static function sendMail( &$user, $details, $useractivation, $guest = false )
 	{
-		$com = DSCFork::getApp( );
+		$com = Stratum::getApp( );
 		$com_name = strtoupper( 'com_' . $com->getName( ) );
 
 		$lang = JFactory::getLanguage( );
-		$lang->load( 'lib_dscfork', JPATH_ADMINISTRATOR );
+		$lang->load( 'lib_stratum', JPATH_ADMINISTRATOR );
 
 		$mainframe = JFactory::getApplication( );
 

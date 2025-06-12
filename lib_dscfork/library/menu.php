@@ -15,7 +15,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 JLoader::register( 'JToolBar', JPATH_PLATFORM . '/cms/toolbar/toolbar.php' );
 
-class DSCForkMenu
+class StratumMenu
 {
 	public $_name = array( );
 	public $_menu;
@@ -103,7 +103,7 @@ class DSCForkMenu
 	 * @param string $name
 	 * @return mixed
 	 *
-	 * Returns a reference to a DSCForkMenu object or false if submenus have been disabled by an admin
+	 * Returns a reference to a StratumMenu object or false if submenus have been disabled by an admin
 	 */
 	public static function getInstance( $name = 'submenu' )
 	{
@@ -116,7 +116,7 @@ class DSCForkMenu
 
 		if ( empty( $instances[$name] ) )
 		{
-			$instances[$name] = new DSCForkMenu( $name );
+			$instances[$name] = new StratumMenu( $name );
 		}
 
 		return $instances[$name];
@@ -153,14 +153,14 @@ class DSCForkMenu
 		if ( !empty( $items ) )
 		{
 			$base = JFactory::getApplication( )->isAdmin( ) ? JPATH_ADMINISTRATOR : JPATH_SITE;
-			$app = DSCFork::getApp( );
+			$app = Stratum::getApp( );
 			$template = JFactory::getApplication( )->getTemplate( );
 
-			$lib_path = JPATH_SITE . '/libraries/dscfork/component/view/dashboard';
+			$lib_path = JPATH_SITE . '/libraries/stratum/component/view/dashboard';
 			$com_template_path = $base . '/components/com_' . $app->getName( ) . '/views/dashboard/tmpl';
 			$template_path = $base . '/templates/' . $template . '/html/com_' . $app->getName( ) . '/dashboard';
 
-			$view = new DSCForkView( array( 'name' => 'dashboard', 'template_path' => $lib_path ) );
+			$view = new StratumView( array( 'name' => 'dashboard', 'template_path' => $lib_path ) );
 
 			$view->set( 'items', $items );
 			$view->set( 'name', $name );
@@ -215,7 +215,7 @@ class DSCForkMenu
 				$list[$id] = $v;
 				$list[$id]->treename = "$indent$txt";
 				$list[$id]->children = count( @$children[$id] );
-				$list = DSCForkMenu::treerecurse( $id, $indent . $spacer, $list, $children, $maxlevel, $level + 1, $type, $pre, $spacer );
+				$list = StratumMenu::treerecurse( $id, $indent . $spacer, $list, $children, $maxlevel, $level + 1, $type, $pre, $spacer );
 			}
 		}
 		return $list;

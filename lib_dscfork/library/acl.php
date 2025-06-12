@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-class DSCForkAcl
+class StratumAcl
 {
 
 	/**
@@ -117,7 +117,7 @@ class DSCForkAcl
 	/**
 	 * Checks if a user is logged in and if not it redirections to login if not
 	 *
-	 * This is very simple on purpose you just do DSCForkAcl::validateUser(); at anytime and it  check for a valid user ID and redirect them to login. redirect back once logged in.
+	 * This is very simple on purpose you just do StratumAcl::validateUser(); at anytime and it  check for a valid user ID and redirect them to login. redirect back once logged in.
 	 *
 	 * IF YOU WANT REAL ACL YOU SHOULD USE JOOMLAS canAccess methods
 	 *
@@ -127,7 +127,7 @@ class DSCForkAcl
 	public static function validateUser( $msg = '' )
 	{
 		if ( empty( $msg ) )
-			$msg = JText::_( 'LIB_DSCFORK_YOU_MUST_LOGIN_FIRST' );
+			$msg = JText::_( 'LIB_STRATUM_YOU_MUST_LOGIN_FIRST' );
 
 		$userId = JFactory::getUser( )->get( 'id' );
 		if ( !$userId )

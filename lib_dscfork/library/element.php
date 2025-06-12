@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-abstract class DSCForkElement extends JObject
+abstract class StratumElement extends JObject
 {
 	public $element = array( );
 	public $name = null;

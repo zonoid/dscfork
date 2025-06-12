@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkModule extends JObject
+class StratumModule extends JObject
 {
 	public static function renderModules( $position, $item_id, $options = array('style' => 'default') )
 	{

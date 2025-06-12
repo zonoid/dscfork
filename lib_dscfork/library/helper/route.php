@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperRoute extends DSCForkHelper
+class StratumHelperRoute extends StratumHelper
 {
 	static $itemids = null;
 
@@ -26,7 +26,7 @@ class DSCForkHelperRoute extends DSCForkHelper
 
 		if ( empty( $option ) )
 		{
-			$com = DSCFork::getApp( );
+			$com = Stratum::getApp( );
 			$option = 'com_' . $com->getName( );
 		}
 

@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperPlugin extends DSCForkHelper
+class StratumHelperPlugin extends StratumHelper
 {
 	/**
 	 * Only returns plugins that have a specific event
@@ -22,14 +22,14 @@ class DSCForkHelperPlugin extends DSCForkHelper
 	 * @param $folder
 	 * @return array of JTable objects
 	 */
-	function getPluginsWithEvent( $eventName, $folder = 'DSCFork' )
+	function getPluginsWithEvent( $eventName, $folder = 'Stratum' )
 	{
 		$return = array( );
-		if ( $plugins = DSCForkHelperPlugin::getPlugins( $folder ) )
+		if ( $plugins = StratumHelperPlugin::getPlugins( $folder ) )
 		{
 			foreach ( $plugins as $plugin )
 			{
-				if ( DSCForkHelperPlugin::hasEvent( $plugin, $eventName ) )
+				if ( StratumHelperPlugin::hasEvent( $plugin, $eventName ) )
 				{
 					$return[] = $plugin;
 				}
@@ -44,7 +44,7 @@ class DSCForkHelperPlugin extends DSCForkHelper
 	 * @param mixed Boolean
 	 * @return array
 	 */
-	function getPlugins( $folder = 'DSCFork' )
+	function getPlugins( $folder = 'Stratum' )
 	{
 		$folder = strtolower( $folder );
 		$db = JFactory::getDBO( );
@@ -128,7 +128,7 @@ class DSCForkHelperPlugin extends DSCForkHelper
 		}
 
 		// Check if they have a particular event
-		$import = JPluginHelper::importPlugin( strtolower( 'DSCFork' ), $element->element );
+		$import = JPluginHelper::importPlugin( strtolower( 'Stratum' ), $element->element );
 		$dispatcher = JDispatcher::getInstance( );
 		$result = $dispatcher->trigger( $eventName, array( $element ) );
 		if ( in_array( true, $result, true ) )

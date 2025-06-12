@@ -10,7 +10,7 @@
  * 	@license 	Licensed under the GNU GPLv3 <http://www.gnu.org/licenses/gpl.html> or later *
  */
 
-class DSCForkRoute
+class StratumRoute
 {
 	/**
 	 * Translates an internal Joomla URL to a humanly readible URL.
@@ -45,7 +45,7 @@ class DSCForkRoute
 		//TODO do better Itemid check  so we can check if actually has a value
 		if ( !strpos( $url, 'Itemid=' ) && $findItemid )
 		{
-			$itemid = DSCForkRoute::findItemid( $url );
+			$itemid = StratumRoute::findItemid( $url );
 			if ( $itemid )
 				$url = $url . '&Itemid=' . $itemid;
 

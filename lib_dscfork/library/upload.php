@@ -535,9 +535,9 @@ defined('_JEXEC') or die('Restricted access');
  * @package   cmf
  * @subpackage external
  */
-DSCFork::load( 'DSCForkImage', 'library.image' );
+Stratum::load( 'StratumImage', 'library.image' );
 
-class DSCForkUpload extends DSCForkImage 
+class StratumUpload extends StratumImage
 {
     /**
      * Class version
@@ -2160,7 +2160,7 @@ class DSCForkUpload extends DSCForkImage
      *    or   string $file Local filename
      * @param  string $lang Optional language code
      */
-    function DSCForkUpload($file, $lang = 'en_GB') {
+    function StratumUpload($file, $lang = 'en_GB') {
 
         $this->version            = '0.29';
 

@@ -231,7 +231,7 @@ var MultiUpload = new Class(
 			var delete_button = new Element(
 				'img',
 				{
-					'src':dscfork.jbase+'media/dscfork/images/publish_x.png',
+					'src':stratum.jbase+'media/stratum/images/publish_x.png',
 					'alt':'Delete',
 					'title':'Delete',
 					'events':{

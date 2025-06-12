@@ -21,7 +21,7 @@ if (JFile::exists(JPATH_SITE.'/libraries/cms/html/select.php')) {
     require_once( JPATH_SITE.'/libraries/joomla/html/select.php' );
 }
 
-class DSCForkSelect extends JHTMLSelect
+class StratumSelect extends JHTMLSelect
 {
     /**
     * Generates a yes/no radio list with the arguments in a consistent order
@@ -144,13 +144,13 @@ class DSCForkSelect extends JHTMLSelect
      */
 	public static function btbooleanlist($name, $attribs = null, $selected = null, $yes = 'JYES', $no = 'JNO', $id = false)
 	{
-	//	JHTML::_('script', 'dscfork/bootstrapped-advanced-ui.js', false, true); //TODO: improve js
-	    JHTML::_('stylesheet', 'dscfork/bootstrapped-advanced-ui.css', array(), true);
+	//	JHTML::_('script', 'stratum/bootstrapped-advanced-ui.js', false, true); //TODO: improve js
+	    JHTML::_('stylesheet', 'stratum/bootstrapped-advanced-ui.css', array(), true);
 	    $arr = array(JHtml::_('select.option', '0', JText::_($no)), JHtml::_('select.option', '1', JText::_($yes)));
 	    $html = '';
 	    //$html .= '<div class="control-group"><div class="controls">';
 		$html .= '<fieldset id="'.$name.'" class="radio btn-group">';
-	    $html .=  DSCForkSelect::btradiolist( $arr, $name, $attribs, 'value', 'text', (int) $selected, $id);
+	    $html .=  StratumSelect::btradiolist( $arr, $name, $attribs, 'value', 'text', (int) $selected, $id);
 	    $html .= '</fieldset>';
 	   // $html .= '</div></div>';
 	    return $html;

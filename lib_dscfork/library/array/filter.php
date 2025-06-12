@@ -17,7 +17,7 @@ defined('_JEXEC') or die('Direct Access to this location is not allowed.');
  * Provide easy filtering iterator for arrays
  * @see: http://php.net/manual/en/class.filteriterator.php
  */
-class DSCForkArrayFilter extends FilterIterator 
+class StratumArrayFilter extends FilterIterator
 {
     private $filters = array();
     private $data = array();
@@ -57,7 +57,7 @@ class DSCForkArrayFilter extends FilterIterator
      * @param unknown_type $filter_method
      * @param unknown_type $filter_value
      * @param unknown_type $filter_type
-     * @return DSCForkArrayFilter
+     * @return StratumArrayFilter
      */
     public function add_filter( $filter_field, $filter_method, $filter_value ) 
     {
@@ -242,11 +242,11 @@ class DSCForkArrayFilter extends FilterIterator
     }
 }
 
-if ( !function_exists( 'dscfork_array_filter' ) ) 
+if ( !function_exists( 'stratum_array_filter' ) )
 {
-    function dscfork_array_filter( $data, $filter_field = NULL, $filter_method = NULL, $filter_value = NULL ) 
+    function stratum_array_filter( $data, $filter_field = NULL, $filter_method = NULL, $filter_value = NULL )
     {
-        $dscfork_array_filter = new DSCForkArrayFilter( $data, $filter_field, $filter_method, $filter_value );
-        return $dscfork_array_filter;
+        $stratum_array_filter = new StratumArrayFilter( $data, $filter_field, $filter_method, $filter_value );
+        return $stratum_array_filter;
     }
 }

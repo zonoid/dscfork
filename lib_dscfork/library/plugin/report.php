@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined('_JEXEC') or die('Restricted access');
 
-class DSCForkPluginReport extends DSCForkPlugin
+class StratumPluginReport extends StratumPlugin
 {
     /**
      * @var $_element  string  Should always correspond with the plugin's filename, 
@@ -109,8 +109,8 @@ class DSCForkPluginReport extends DSCForkPlugin
         $fullname = strtolower( $prefix.$name );
         if (empty($this->_models[$fullname]))
         {
-        	DSCForkModel::addIncludePath( JPATH_ADMINISTRATOR.'/components/com_sample/models' );
-            if ( !$model = DSCForkModel::getInstance($name, $prefix, $config) )
+		StratumModel::addIncludePath( JPATH_ADMINISTRATOR.'/components/com_sample/models' );
+            if ( !$model = StratumModel::getInstance($name, $prefix, $config) )
             {
                 $model = new SampleModelBase();
             }

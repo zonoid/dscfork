@@ -15,7 +15,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.controller' );
 
-class DSCForkControllerAdmin extends DSCForkController
+class StratumControllerAdmin extends StratumController
 {
 
 	function __construct( $config = array() )
@@ -82,7 +82,7 @@ class DSCForkControllerAdmin extends DSCForkController
 
 		if ( !$table->save( ) )
 		{
-			$msg->message = JText::_( 'LIB_DSCFORK_ERROR' ) . ": " . $table->getError( );
+			$msg->message = JText::_( 'LIB_STRATUM_ERROR' ) . ": " . $table->getError( );
 		}
 
 		$this->setRedirect( $msg->link, $msg->message, $msg->type );

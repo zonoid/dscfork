@@ -13,7 +13,7 @@
  /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperSubmenu extends DSCForkHelper
+class StratumHelperSubmenu extends StratumHelper
 {
 	
 	public function render()

@@ -16,7 +16,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.filter.filterinput' );
 jimport( 'joomla.application.component.model' );
 
-class DSCForkModel extends JModelLegacy
+class StratumModel extends JModelLegacy
 {
 	var $_filterinput = null;
 	// instance of JFilterInput
@@ -74,7 +74,7 @@ class DSCForkModel extends JModelLegacy
 			$prefix = str_replace( 'com_', '', $this->option ) . 'Table';
 		}
 
-		DSCForkTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_sample/tables' );
+		StratumTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_sample/tables' );
 		if( $table = $this->_createTable( $name, $prefix, $options ) )
 		{
 			return $table;
@@ -254,7 +254,7 @@ class DSCForkModel extends JModelLegacy
 	}
 
 	/**
-	 * Gets an item for displaying (as opposed to saving, which requires a DSCForkTable object)
+	 * Gets an item for displaying (as opposed to saving, which requires a StratumTable object)
 	 * using the query from the model and the tbl's unique identifier
 	 *
 	 * @return database->loadObject() record
@@ -545,7 +545,7 @@ class DSCForkModel extends JModelLegacy
 			return $this->_query;
 		}
 
-		$query = new DSCForkQuery( );
+		$query = new StratumQuery( );
 		//TODO: use joomla query
 
 		$this->_buildQueryFields( $query );
@@ -564,7 +564,7 @@ class DSCForkModel extends JModelLegacy
 	 */
 	protected function _buildResultQuery( )
 	{
-		$query = new DSCForkQuery( );
+		$query = new StratumQuery( );
 		$query->select( $this->getState( 'select', 'COUNT(*)' ) );
 
 		$this->_buildQueryFrom( $query );

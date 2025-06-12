@@ -1,11 +1,11 @@
-if ( typeof (dscfork) === 'undefined') {
-	var dscfork = {};
+if ( typeof (stratum) === 'undefined') {
+	var stratum = {};
 }
 
 /**
  * Simple function to refresh a page.
  */
-dscfork.update = function() {
+stratum.update = function() {
 	location.reload(true);
 };
 /**
@@ -14,7 +14,7 @@ dscfork.update = function() {
  * @param form
  * @return
  */
-dscfork.resetFormFilters = function(form) {
+stratum.resetFormFilters = function(form) {
 	// loop through form elements
 	var str = new Array();
 	for ( i = 0; i < form.elements.length; i++) {
@@ -31,7 +31,7 @@ dscfork.resetFormFilters = function(form) {
  * @param dir
  * @param form
  */
-dscfork.gridOrdering = function(order, dir, form) {
+stratum.gridOrdering = function(order, dir, form) {
 	if (!form) {
 		form = document.adminForm;
 	}
@@ -47,7 +47,7 @@ dscfork.gridOrdering = function(order, dir, form) {
  * @param change
  * @return
  */
-dscfork.gridOrder = function(id, change, form) {
+stratum.gridOrder = function(id, change, form) {
 	if (!form) {
 		form = document.adminForm;
 	}
@@ -69,9 +69,9 @@ dscfork.gridOrder = function(id, change, form) {
  * @param msg
  * @param onCompleteFunction
  */
-dscfork.formValidation = function(url, container, task, form, doModal, msg, onCompleteFunction) {
+stratum.formValidation = function(url, container, task, form, doModal, msg, onCompleteFunction) {
 	if (doModal != false) {
-		dscfork.newModal(msg);
+		stratum.newModal(msg);
 	}
 
 	// loop through form elements and prepare an array of objects for passing to server
@@ -121,7 +121,7 @@ dscfork.formValidation = function(url, container, task, form, doModal, msg, onCo
  * @param task
  * @return
  */
-dscfork.submitForm = function(task, form) {
+stratum.submitForm = function(task, form) {
 	if (!form) {
 		form = document.adminForm;
 	}
@@ -141,7 +141,7 @@ dscfork.submitForm = function(task, form) {
  * @param {Object} showtext
  * @param {Object} hidetext
  */
-dscfork.displayDiv = function(divname, spanname, showtext, hidetext) {
+stratum.displayDiv = function(divname, spanname, showtext, hidetext) {
 	var div = document.getElementById(divname);
 	var span = document.getElementById(spanname);
 
@@ -158,7 +158,7 @@ dscfork.displayDiv = function(divname, spanname, showtext, hidetext) {
  * @param {Object} prefix
  * @param {Object} newSuffix
  */
-dscfork.switchDisplayDiv = function(prefix, newSuffix) {
+stratum.switchDisplayDiv = function(prefix, newSuffix) {
 	var newName = prefix + newSuffix;
 	var currentSuffixDiv = document.getElementById('currentSuffix');
 	var currentSuffix = currentSuffixDiv.innerHTML;
@@ -174,7 +174,7 @@ dscfork.switchDisplayDiv = function(prefix, newSuffix) {
  *
  * @param divname
  */
-dscfork.showHideDiv = function(divname) {
+stratum.showHideDiv = function(divname) {
 	var divObject = document.getElementById(divname);
 	if (divObject == null) {
 		return;
@@ -192,9 +192,9 @@ dscfork.showHideDiv = function(divname) {
  * @param {String} form name (optional)
  * @param {String} msg message for the modal div (optional)
  */
-dscfork.doTask = function(url, container, form, msg, doModal, onCompleteFunction) {
+stratum.doTask = function(url, container, form, msg, doModal, onCompleteFunction) {
 	if (doModal != false) {
-		dscfork.newModal(msg);
+		stratum.newModal(msg);
 	}
 
 	// if url is present, do validation
@@ -261,7 +261,7 @@ dscfork.doTask = function(url, container, form, msg, doModal, onCompleteFunction
  *
  * @param {String} msg message for the modal div (optional)
  */
-dscfork.newModal = function(msg) {
+stratum.newModal = function(msg) {
 	if ( typeof window.innerWidth != 'undefined') {
 		var h = window.innerHeight;
 		var w = window.innerWidth;
@@ -273,7 +273,7 @@ dscfork.newModal = function(msg) {
 	var l = (w / 2) - 15;
 	var i = document.createElement('img');
 	var s = window.location.toString();
-	var src = dscfork.jbase + 'media/dscfork/images/ajax-loader.gif';
+	var src = stratum.jbase + 'media/stratum/images/ajax-loader.gif';
 	i.src = src;
 	i.style.position = 'absolute';
 	i.style.top = t + 'px';
@@ -315,7 +315,7 @@ dscfork.newModal = function(msg) {
  * @param task
  * @return
  */
-dscfork.listItemTask = function(id, task, form) {
+stratum.listItemTask = function(id, task, form) {
 	if (!form) {
 		var f = document.adminForm;
 	} else {
@@ -332,7 +332,7 @@ dscfork.listItemTask = function(id, task, form) {
 		}// for
 		cb.checked = true;
 		f.boxchecked.value = 1;
-		dscfork.submitbutton(task);
+		stratum.submitbutton(task);
 	}
 	return false;
 };
@@ -343,7 +343,7 @@ dscfork.listItemTask = function(id, task, form) {
  * @param task
  * @return
  */
-dscfork.submitbutton = function(task, form) {
+stratum.submitbutton = function(task, form) {
 	if ( typeof (form) === 'undefined') {
 		form = document.getElementById('adminForm');
 		/**
@@ -377,7 +377,7 @@ dscfork.submitbutton = function(task, form) {
  *
  * @return Array with all data from all inputs on the form
  */
-dscfork.getFormInputData = function(form) {
+stratum.getFormInputData = function(form) {
 	var str = new Array();
 	for ( i = 0; i < form.elements.length; i++) {
 		postvar = {
@@ -394,7 +394,7 @@ dscfork.getFormInputData = function(form) {
 /**
  * A JavaScript equivalent of PHP’s strip_tags 
  */
-dscfork.strip_tags = function(input, allowed) {
+stratum.strip_tags = function(input, allowed) {
 	allowed = (((allowed || '') + '')
 	    .toLowerCase()
 	    .match(/<[a-z][a-z0-9]*>/g) || [])
@@ -416,5 +416,5 @@ dscfork.strip_tags = function(input, allowed) {
  * @return
  */
 function submitbutton(task) {
-	dscfork.submitbutton(task);
+	stratum.submitbutton(task);
 }

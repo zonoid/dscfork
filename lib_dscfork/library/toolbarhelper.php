@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkToolBarHelper extends JToolBarHelper
+class StratumToolBarHelper extends JToolBarHelper
 {
 	/**
 	 * Button type

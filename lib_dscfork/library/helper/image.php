@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperImage extends DSCForkHelper
+class StratumHelperImage extends StratumHelper
 {
 	// Default Dimensions for the images
 	var $product_img_height = 0;
@@ -36,12 +36,12 @@ class DSCForkHelperImage extends DSCForkHelper
 	/**
 	 * Protected! Use the getInstance
 	 */
-	protected function DSCForkHelperImage( )
+	protected function StratumHelperImage( )
 	{
 		// Parent Helper Construction
 		parent::__construct( );
 
-		$config = DSCFork::getApp( );
+		$config = Stratum::getApp( );
 
 		// Load default Parameters
 		$this->product_img_height = $config->get( 'product_img_height' );
@@ -50,12 +50,12 @@ class DSCForkHelperImage extends DSCForkHelper
 		$this->category_img_width = $config->get( 'category_img_width' );
 		$this->manufacturer_img_width = $config->get( 'manufacturer_img_width' );
 		$this->manufacturer_img_height = $config->get( 'manufacturer_img_height' );
-		$this->product_img_path = DSCFork::getPath( 'products_images' );
-		$this->category_img_path = DSCFork::getPath( 'categories_images' );
-		$this->manufacturer_img_path = DSCFork::getPath( 'manufacturers_images' );
-		$this->product_thumb_path = DSCFork::getPath( 'products_thumbs' );
-		$this->category_thumb_path = DSCFork::getPath( 'categories_thumbs' );
-		$this->manufacturer_thumb_path = DSCFork::getPath( 'manufacturers_thumbs' );
+		$this->product_img_path = Stratum::getPath( 'products_images' );
+		$this->category_img_path = Stratum::getPath( 'categories_images' );
+		$this->manufacturer_img_path = Stratum::getPath( 'manufacturers_images' );
+		$this->product_thumb_path = Stratum::getPath( 'products_thumbs' );
+		$this->category_thumb_path = Stratum::getPath( 'categories_thumbs' );
+		$this->manufacturer_thumb_path = Stratum::getPath( 'manufacturers_thumbs' );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class DSCForkHelperImage extends DSCForkHelper
 		}
 
 		JImport( 'com_sample.library.image', JPATH_ADMINISTRATOR . 'components' );
-		$img = new DSCForkImage( $name );
+		$img = new StratumImage( $name );
 
 		$types = array( 'product', 'category', 'manufacturer' );
 		if ( !in_array( $type, $types ) )

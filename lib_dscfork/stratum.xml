@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="library" method="upgrade" version="3.0">
-	<name>DSCFork Library</name>
-	<libraryname>dscfork</libraryname>
+	<name>Stratum Library</name>
+	<libraryname>stratum</libraryname>
 	<author>Gerald R. Zalsos</author>
-	<creationDate>June 2012</creationDate>
-	<copyright>Copyright (C) 2015 klaraontheweb.com All rights reserved.</copyright>
+	<creationDate>2024</creationDate>
+	<copyright>Copyright (C) 2024 klaraontheweb.com All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later</license>
 	<authorEmail>info@klaraontheweb.com</authorEmail>
 	<authorUrl>www.klaraontheweb.com</authorUrl>
-	<version>4.0.0</version>
+	<version>5.0.0</version>
 	<description>
 	<![CDATA[
 	<div class="alert alert-info text-left">
-		<h4>DSCFork Library</h4>
-		<p>Fork of Dioscouri Library, @see https://github.com/dioscouri/library</p>
+		<h4>Stratum Library</h4>
+		<p>Updated library for Joomla 4/5 compatibility. Originally a fork of Dioscouri Library.</p>
 	</div>	
 	]]>		
 	</description>
@@ -23,22 +23,22 @@
 		<folder>highroller</folder>
 		<folder>library</folder>
 		<folder>tools</folder>
-		<file>dscfork.php</file>
+		<file>stratum.php</file>
 		<file>loader.php</file>
 	</files>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.lib_dscfork.ini</language>
+		<language tag="en-GB">en-GB/en-GB.lib_stratum.ini</language>
 	</languages>
 
 	<!-- Media -->
-	<media destination="dscfork" folder="media">
+	<media destination="stratum" folder="media">
 		<folder>css</folder>		
 		<folder>images</folder>
 		<folder>js</folder>		
 		<file>index.html</file>
 	</media>
 	<updateservers>
-		<server type="extension" priority="1" name="DSCFork Library Updates">http://updates.klaraontheweb.com/library/updates.xml</server>
+		<server type="extension" priority="1" name="Stratum Library Updates">http://updates.klaraontheweb.com/library/updates.xml</server>
 	</updateservers>
 
 </extension>

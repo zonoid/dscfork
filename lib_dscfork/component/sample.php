@@ -16,10 +16,10 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 //check if we have the library installed
 if( !class_exists( 'Sample' ) )
-	exit( 'DSCFork Library required!' );
+	exit( 'Stratum Library required!' );
 
 //require libray component herper
-require_once JPATH_SITE . '/libraries/dscfork/library/helper/component.php';
+require_once JPATH_SITE . '/libraries/stratum/library/helper/component.php';
 
 //specific component css and javascript can be added here
 

@@ -13,14 +13,14 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkTools
+class StratumTools
 {
 	/**
 	 *
 	 * @param $folder
 	 * @return unknown_type
 	 */
-	public static function getPlugins( $folder = 'DSCFork' )
+	public static function getPlugins( $folder = 'Stratum' )
 	{
 		$database = JFactory::getDBO( );
 		$folder = strtolower( $folder );

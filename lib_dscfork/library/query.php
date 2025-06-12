@@ -14,7 +14,7 @@ defined( 'JPATH_BASE' ) or die ;
  * @subpackage	Database
  * @since		1.6
  */
-class DSCForkQuery extends JObject
+class StratumQuery extends JObject
 {
 	/** @var string The query type */
 	protected $_type = '';
@@ -60,7 +60,7 @@ class DSCForkQuery extends JObject
 		$this->_type = 'select';
 		if ( is_null( $this->_select ) )
 		{
-			$this->_select = new DSCForkQueryElement( 'SELECT', $columns );
+			$this->_select = new StratumQueryElement( 'SELECT', $columns );
 		} else
 		{
 			$this->_select->append( $columns );
@@ -75,7 +75,7 @@ class DSCForkQuery extends JObject
 	public function delete( )
 	{
 		$this->_type = 'delete';
-		$this->_delete = new DSCForkQueryElement( 'DELETE', array( ), '' );
+		$this->_delete = new StratumQueryElement( 'DELETE', array( ), '' );
 		return $this;
 	}
 
@@ -85,7 +85,7 @@ class DSCForkQuery extends JObject
 	public function insert( $tables )
 	{
 		$this->_type = 'insert';
-		$this->_insert = new DSCForkQueryElement( 'INSERT INTO', $tables );
+		$this->_insert = new StratumQueryElement( 'INSERT INTO', $tables );
 		return $this;
 	}
 
@@ -95,7 +95,7 @@ class DSCForkQuery extends JObject
 	public function update( $tables )
 	{
 		$this->_type = 'update';
-		$this->_update = new DSCForkQueryElement( 'UPDATE', $tables );
+		$this->_update = new StratumQueryElement( 'UPDATE', $tables );
 		return $this;
 	}
 
@@ -106,7 +106,7 @@ class DSCForkQuery extends JObject
 	{
 		if ( is_null( $this->_from ) )
 		{
-			$this->_from = new DSCForkQueryElement( 'FROM', $tables );
+			$this->_from = new StratumQueryElement( 'FROM', $tables );
 		} else
 		{
 			$this->_from->append( $tables );
@@ -125,7 +125,7 @@ class DSCForkQuery extends JObject
 		{
 			$this->_join = array( );
 		}
-		$this->_join[] = new DSCForkQueryElement( strtoupper( $type ) . ' JOIN', $conditions );
+		$this->_join[] = new StratumQueryElement( strtoupper( $type ) . ' JOIN', $conditions );
 
 		return $this;
 	}
@@ -179,7 +179,7 @@ class DSCForkQuery extends JObject
 		if ( is_null( $this->_set ) )
 		{
 			$glue = strtoupper( $glue );
-			$this->_set = new DSCForkQueryElement( 'SET', $conditions, "\n\t$glue " );
+			$this->_set = new StratumQueryElement( 'SET', $conditions, "\n\t$glue " );
 		} else
 		{
 			$this->_set->append( $conditions );
@@ -197,7 +197,7 @@ class DSCForkQuery extends JObject
 		if ( is_null( $this->_where ) )
 		{
 			$glue = strtoupper( $glue );
-			$this->_where = new DSCForkQueryElement( 'WHERE', $conditions, "\n\t$glue " );
+			$this->_where = new StratumQueryElement( 'WHERE', $conditions, "\n\t$glue " );
 		} else
 		{
 			$this->_where->append( $conditions );
@@ -213,7 +213,7 @@ class DSCForkQuery extends JObject
 	{
 		if ( is_null( $this->_group ) )
 		{
-			$this->_group = new DSCForkQueryElement( 'GROUP BY', $columns );
+			$this->_group = new StratumQueryElement( 'GROUP BY', $columns );
 		} else
 		{
 			$this->_group->append( $columns );
@@ -231,7 +231,7 @@ class DSCForkQuery extends JObject
 		if ( is_null( $this->_having ) )
 		{
 			$glue = strtoupper( $glue );
-			$this->_having = new DSCForkQueryElement( 'HAVING', $conditions, "\n\t$glue " );
+			$this->_having = new StratumQueryElement( 'HAVING', $conditions, "\n\t$glue " );
 		} else
 		{
 			$this->_having->append( $conditions );
@@ -247,7 +247,7 @@ class DSCForkQuery extends JObject
 	{
 		if ( is_null( $this->_order ) )
 		{
-			$this->_order = new DSCForkQueryElement( 'ORDER BY', $columns );
+			$this->_order = new StratumQueryElement( 'ORDER BY', $columns );
 		} else
 		{
 			$this->_order->append( $columns );

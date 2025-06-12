@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="system" method="upgrade" version="3.0">
-	<name>System - DSCFork</name>
+	<name>System - Stratum</name>
 	<author>Gerald R. Zalsos</author>
 	<authorEmail>info@klaraontheweb.com</authorEmail>
 	<authorUrl>http://www.klaraontheweb.com</authorUrl>
@@ -8,12 +8,12 @@
 	<creationDate>June 2012</creationDate>
 	<copyright>Copyright (C) 2015 klaraontheweb.com All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later</license>
-	<description>Adds the DSCFork Library to the Autoloader</description>
+	<description>Adds the Stratum Library to the Autoloader</description>
 	<files>
-		<filename plugin="dscfork">dscfork.php</filename>
+		<filename plugin="stratum">stratum.php</filename>
 	</files>
 	<updateservers>
-		<server type="extension" priority="1" name="DSCFork System Plugin Updates">http://updates.klaraontheweb.com/plg_system_dscfork/updates.xml</server>
+		<server type="extension" priority="1" name="Stratum System Plugin Updates">http://updates.klaraontheweb.com/plg_system_stratum/updates.xml</server>
 	</updateservers>
 	<config>
 		<fields name="params"></fields>

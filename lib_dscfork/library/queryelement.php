@@ -14,7 +14,7 @@ defined( 'JPATH_BASE' ) or die ;
  * @subpackage  Database
  * @since       1.6
  */
-class DSCForkQueryElement extends JObject
+class StratumQueryElement extends JObject
 {
 	/** @var string The name of the element */
 	protected $_name = null;

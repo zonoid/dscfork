@@ -15,7 +15,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport( 'joomla.html.toolbar.button' );
 
-class DSCForkButton extends JButton
+class StratumButton extends JButton
 {
 	/**
 	 * Button type
@@ -23,9 +23,9 @@ class DSCForkButton extends JButton
 	 * @access	protected
 	 * @var		string
 	 */
-	protected $_name = 'DSCFork';
+	protected $_name = 'Stratum';
 
-	function fetchButton( $type = 'DSCFork', $name = '', $text = '', $task = '', $list = true, $hideMenu = false, $taskName = 'shippingTask' )
+	function fetchButton( $type = 'Stratum', $name = '', $text = '', $task = '', $list = true, $hideMenu = false, $taskName = 'shippingTask' )
 	{
 		$i18n_text = JText::_( $text );
 		$class = $this->fetchIconClass( $name );
@@ -55,15 +55,15 @@ class DSCForkButton extends JButton
 	function _getCommand( $name, $task, $list, $hide, $taskName )
 	{
 		$todo = JString::strtolower( JText::_( $name ) );
-		$message = JText::sprintf( 'LIB_DSCFORK_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_DO', $todo );
+		$message = JText::sprintf( 'LIB_STRATUM_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_DO', $todo );
 		$message = addslashes( $message );
 
 		if ( $list )
 		{
-			$cmd = "javascript:if(document.adminForm.boxchecked.value==0){alert('$message');}else{ submitDSCForkbutton('$task', '$taskName')}";
+			$cmd = "javascript:if(document.adminForm.boxchecked.value==0){alert('$message');}else{ submitStratumbutton('$task', '$taskName')}";
 		} else
 		{
-			$cmd = "javascript:$hidecode submitDSCForkbutton('$task', '$taskName')";
+			$cmd = "javascript:$hidecode submitStratumbutton('$task', '$taskName')";
 		}
 
 		return $cmd;

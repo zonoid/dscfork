@@ -12,7 +12,7 @@
 
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-class DSCForkTemplateBase
+class StratumTemplateBase
 {
 
 	public $name = 'template';
@@ -30,9 +30,9 @@ class DSCForkTemplateBase
 
 	function __construct( $template )
 	{
-		$this->API = new DSCForkTemplateAPI( $template );
+		$this->API = new StratumTemplateAPI( $template );
 		$this->name = $this->API->templateName( );
-		$this->bootstrap = new DSCForkTemplateBootstrap( $this );
+		$this->bootstrap = new StratumTemplateBootstrap( $this );
 		$this->layout = $this->API->get( 'layout', 'default.php' );
 		$this->pageclass = $this->API->get( 'pageclass', '' );
 	}

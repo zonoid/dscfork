@@ -16,8 +16,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 $mainframe = JFactory::getApplication( );
 
 //get current app and load
-$dscForkApp = DSCFork::getApp( );
-$app = ucfirst( $dscForkApp->getName( ) );
+$stratumApp = Stratum::getApp( );
+$app = ucfirst( $stratumApp->getName( ) );
 
 //TODO: add config if we do the diagnostics
 // before executing any tasks, check the integrity of the installation
@@ -66,16 +66,16 @@ $js .= "com_" . strtolower( $app ) . ".jbase = '" . $uri->root( ) . "';\n";
 $doc->addScriptDeclaration( $js );
 
 //add common js and css
-JHTML::_( 'script', 'common.js', 'media/dscfork/js/' );
-JHTML::_( 'stylesheet', 'common.css', 'media/dscfork/css/' );
+JHTML::_( 'script', 'common.js', 'media/stratum/js/' );
+JHTML::_( 'stylesheet', 'common.css', 'media/stratum/css/' );
 
 //register component helpers
 $parentPath = JPATH_ADMINISTRATOR . '/components/com_' . strtolower( $app ) . '/helpers';
-DSCForkLoader::discover( $app . 'Helper', $parentPath, true );
+StratumLoader::discover( $app . 'Helper', $parentPath, true );
 
 //register component libary
 $parentPath = JPATH_ADMINISTRATOR . '/components/com_' . strtolower( $app ) . '/library';
-DSCForkLoader::discover( $app, $parentPath, true );
+StratumLoader::discover( $app, $parentPath, true );
 
 // load the plugins
 JPluginHelper::importPlugin( strtolower( $app ) );
@@ -112,15 +112,15 @@ else:
 
 <div id="dscfork-container">
 	
-	<div class="dscfork-header dscfork-clearfix">
+	<div class="stratum-header stratum-clearfix">
 		<div class="container-fluid">
 			<div class="container-inner">
-				<div class="dscfork-logo dscfork-left">
+				<div class="stratum-logo stratum-left">
 					<a href="<?php echo $app::getAppUrl();?>"><img src="<?php echo $app::getURL( 'images' ); ?>logo_main.png" class="app-logo"/></a>
 				</div>
-				<div class="dscfork-right">
+				<div class="stratum-right">
 					<?php
-						$modules = JModuleHelper::getModules("dscfork_header_right");
+						$modules = JModuleHelper::getModules("stratum_header_right");
 					
 						$document	= JFactory::getDocument();
 						$renderer	= $document->loadRenderer('module');
@@ -139,11 +139,11 @@ else:
 		
 	</div>
 	
-	<div class="dscfork-admin-wrapper">
+	<div class="stratum-admin-wrapper">
 		
-		<div id="dscfork-sidebar" class="dscfork-sidebar">
+		<div id="stratum-sidebar" class="stratum-sidebar">
 		<?php
-			$modules = JModuleHelper::getModules("dscfork_sidebar");
+			$modules = JModuleHelper::getModules("stratum_sidebar");
 		
 			foreach ( @$modules as $mod )
 			{
@@ -152,10 +152,10 @@ else:
 		?>
 		</div>
 	
-		<div class="dscfork-main">
+		<div class="stratum-main">
 		
-			<div class="app-header dscfork-clearfix">
-				<h2 class="app-title dscfork-left">
+			<div class="app-header stratum-clearfix">
+				<h2 class="app-title stratum-left">
 					<!-- TITLE WILL BE INSERTED HERE -->
 				</h2>				
 				<!-- TOOLBAR BUTTONS WILL BE INSERTED HERE -->				
@@ -175,10 +175,10 @@ else:
 </div>
 <script type="text/javascript">
 //move page title
-jQuery("#dscfork-container .app-title").prepend(dscfork.strip_tags(jQuery("h1.page-title").html()));
+jQuery("#stratum-container .app-title").prepend(stratum.strip_tags(jQuery("h1.page-title").html()));
 
 //move toolbar
-jQuery("#toolbar").addClass("dscfork-right dscfork-margin-none app-toolbar").prependTo(".app-header");										
+jQuery("#toolbar").addClass("stratum-right stratum-margin-none app-toolbar").prependTo(".app-header");
 </script>
 
 <?php endif;?>

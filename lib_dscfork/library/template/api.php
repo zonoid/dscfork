@@ -12,7 +12,7 @@
 
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-class DSCForkTemplateAPI extends JObject
+class StratumTemplateAPI extends JObject
 {
 	private $API;
 

@@ -14,7 +14,7 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 //TODO: Remove this?
-class DSCForkParameter extends JRegistry
+class StratumParameter extends JRegistry
 {
 
 }

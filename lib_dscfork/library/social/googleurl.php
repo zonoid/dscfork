@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkSocialGoogleUrl extends DSCForkSocial
+class StratumSocialGoogleUrl extends StratumSocial
 {
 	public $key = null;
 	public $apiURL = null;

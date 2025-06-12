@@ -16,7 +16,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.filter.filteroutput' );
 jimport( 'joomla.application.component.view' );
 
-class DSCForkView extends JViewLegacy
+class StratumView extends JViewLegacy
 {
 	var $_option = NULL;
 	var $_name = NULL;
@@ -24,7 +24,7 @@ class DSCForkView extends JViewLegacy
 
 	function __construct( $config = array() )
 	{
-		$app = DSCFork::getApp( );
+		$app = Stratum::getApp( );
 		$this->_option = !empty( $app ) ? 'com_' . $app->getName( ) : JFactory::getApplication()->input->getCmd('option');
 		parent::__construct( $config );
 	}

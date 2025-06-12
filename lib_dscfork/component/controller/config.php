@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkControllerConfig extends DSCForkController
+class StratumControllerConfig extends StratumController
 {
 	/**
 	 * constructor
@@ -34,7 +34,7 @@ class DSCForkControllerConfig extends DSCForkController
 		$error = false;
 		$errorMsg = "";
 		$model = $this->getModel( $this->get( 'suffix' ) );
-		$app = DSCFork::getApp();
+		$app = Stratum::getApp();
 		$com = $app->getName();
 		$config = $com::getInstance( );
 		$properties = $config->getProperties( );
@@ -55,7 +55,7 @@ class DSCForkControllerConfig extends DSCForkController
 				if( !$row->save( ) )
 				{
 					$error = true;
-					$errorMsg .= JText::_( "LIB_DSCFORK_COULD_NOT_STORE" ) . " $key :: " . $row->getError( ) . " - ";
+					$errorMsg .= JText::_( "LIB_STRATUM_COULD_NOT_STORE" ) . " $key :: " . $row->getError( ) . " - ";
 				}
 			}
 		}
@@ -63,14 +63,14 @@ class DSCForkControllerConfig extends DSCForkController
 		if( !$error )
 		{
 			$this->messagetype = 'message';
-			$this->message = JText::_( 'LIB_DSCFORK_SAVED' );
+			$this->message = JText::_( 'LIB_STRATUM_SAVED' );
 
 			$dispatcher = JDispatcher::getInstance( );
 			$dispatcher->trigger( 'onAfterSave' . $this->get( 'suffix' ), array( $row ) );
 		} else
 		{
 			$this->messagetype = 'notice';
-			$this->message = JText::_( 'LIB_DSCFORK_SAVE_FAILED' ) . " - " . $errorMsg;
+			$this->message = JText::_( 'LIB_STRATUM_SAVE_FAILED' ) . " - " . $errorMsg;
 		}
 
 		$redirect = "index.php?option=com_sample";

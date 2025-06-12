@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkController extends JControllerLegacy
+class StratumController extends JControllerLegacy
 {
 	/**
 	 * default view
@@ -48,7 +48,7 @@ class DSCForkController extends JControllerLegacy
 		}
 
 		//do we really need to get the whole app to get the name or should we strip it from the option??
-		$app = DSCFork::getApp( );
+		$app = Stratum::getApp( );
 		$this->_name = $app->getName( );
 		$this->_Pluginname = ucfirst( $this->_name );
 
@@ -212,7 +212,7 @@ class DSCForkController extends JControllerLegacy
 				}
 			} else
 			{
-				$model = new DSCForkModel( );
+				$model = new StratumModel( );
 			}
 			$this->_models[$fullname] = $model;
 		}
@@ -268,7 +268,7 @@ class DSCForkController extends JControllerLegacy
 		$modelName = preg_replace( '/[^A-Z0-9_]/i', '', $name );
 		$classPrefix = preg_replace( '/[^A-Z0-9_]/i', '', $prefix );
 
-		$result = DSCForkModel::getInstance( $modelName, $classPrefix, $config );
+		$result = StratumModel::getInstance( $modelName, $classPrefix, $config );
 		return $result;
 	}
 
@@ -366,7 +366,7 @@ class DSCForkController extends JControllerLegacy
 		{
 			if ( $row->checkin( ) )
 			{
-				$this->message = JText::_( "LIB_DSCFORK_ITEM_RELEASED" );
+				$this->message = JText::_( "LIB_STRATUM_ITEM_RELEASED" );
 			}
 		}
 
@@ -391,7 +391,7 @@ class DSCForkController extends JControllerLegacy
 		switch (strtolower($task))
 		{
 			case "cancel":
-				$msg = JText::_( 'LIB_DSCFORK_OPERATION_CANCELLED' );
+				$msg = JText::_( 'LIB_STRATUM_OPERATION_CANCELLED' );
 				$type = "notice";
 				break;
 			case "close":
@@ -427,7 +427,7 @@ class DSCForkController extends JControllerLegacy
 		$elements = json_decode( preg_replace( '/[\n\r]+/', '\n', $this->input->post->getString( 'elements' ) ) );
 
 		// convert elements to array that can be binded
-		$helper = new DSCForkHelper( );
+		$helper = new StratumHelper( );
 		$values = $helper->elementsToArray( $elements );
 
 		// get table object
@@ -533,7 +533,7 @@ class DSCForkController extends JControllerLegacy
 	 */
 	function doTaskAjax( )
 	{
-		JLoader::import( 'dscfork.tools.json', JPATH_SITE . '/libraries' );
+		JLoader::import( 'stratum.tools.json', JPATH_SITE . '/libraries' );
 
 		$success = true;
 		$msg = new stdClass( );
@@ -766,7 +766,7 @@ class DSCForkController extends JControllerLegacy
 		 jimport('joomla.utilities.arrayhelper');
 		 if (!$this->allowSave(JArrayHelper::fromObject($row), $key))
 		 {
-		 $this->setError(JText::_('DSCFORK_ERROR_SAVE_NOT_PERMITTED'));
+		 $this->setError(JText::_('STRATUM_ERROR_SAVE_NOT_PERMITTED'));
 		 $this->setMessage($this->getError(), 'error');
 
 		 $this->setRedirect( JRoute::_('index.php?option=' . $this->get('com') . '&view=' . $this->get( 'suffix' ), false ) );
@@ -781,7 +781,7 @@ class DSCForkController extends JControllerLegacy
 			$model->clearCache( );
 
 			$this->messagetype = 'message';
-			$this->message = JText::_( 'LIB_DSCFORK_SAVED' );
+			$this->message = JText::_( 'LIB_STRATUM_SAVED' );
 
 			$dispatcher = JDispatcher::getInstance( );
 			$dispatcher->trigger( 'onAfterSave' . $this->get( 'suffix' ), array( $row ) );
@@ -791,7 +791,7 @@ class DSCForkController extends JControllerLegacy
 		{
 			$app = JFactory::getApplication( );
 			$this->messagetype = 'notice';
-			$this->message = JText::_( 'LIB_DSCFORK_SAVE_FAILED' );
+			$this->message = JText::_( 'LIB_STRATUM_SAVE_FAILED' );
 			if ( $errors = $row->getErrors( ) )
 			{
 				foreach ( $errors as $error )
@@ -812,7 +812,7 @@ class DSCForkController extends JControllerLegacy
 		{
 			case "save_as":
 				$redirect .= '&view=' . $this->get( 'suffix' ) . '&task=edit&id=' . $row->id;
-				$this->message .= " - " . JText::_( 'LIB_DSCFORK_YOU_ARE_NOW_EDITING_THE_NEW_ITEM' );
+				$this->message .= " - " . JText::_( 'LIB_STRATUM_YOU_ARE_NOW_EDITING_THE_NEW_ITEM' );
 				break;
 			case "saveprev":
 				$redirect .= '&view=' . $this->get( 'suffix' );
@@ -893,11 +893,11 @@ class DSCForkController extends JControllerLegacy
 
 		if ( $error )
 		{
-			$this->message = JText::_( 'LIB_DSCFORK_ERROR' ) . " - " . $this->message;
+			$this->message = JText::_( 'LIB_STRATUM_ERROR' ) . " - " . $this->message;
 			$return = false;
 		} else
 		{
-			$this->message = JText::_( 'LIB_DSCFORK_ITEMS_DELETED' );
+			$this->message = JText::_( 'LIB_STRATUM_ITEMS_DELETED' );
 			$return = true;
 		}
 
@@ -934,7 +934,7 @@ class DSCForkController extends JControllerLegacy
 		if ( !$row->move( $change ) )
 		{
 			$this->messagetype = 'notice';
-			$this->message = JText::_( 'LIB_DSCFORK_ORDERING_FAILED' ) . " - " . $row->getError( );
+			$this->message = JText::_( 'LIB_STRATUM_ORDERING_FAILED' ) . " - " . $row->getError( );
 			$return = false;
 		}
 
@@ -983,11 +983,11 @@ class DSCForkController extends JControllerLegacy
 
 		if ( $error )
 		{
-			$this->message = JText::_( 'LIB_DSCFORK_ERROR' ) . " - " . $this->message;
+			$this->message = JText::_( 'LIB_STRATUM_ERROR' ) . " - " . $this->message;
 			$return = false;
 		} else
 		{
-			$this->message = JText::_( 'LIB_DSCFORK_ITEMS_ORDERED' );
+			$this->message = JText::_( 'LIB_STRATUM_ITEMS_ORDERED' );
 			$return = true;
 		}
 
@@ -1042,7 +1042,7 @@ class DSCForkController extends JControllerLegacy
 				break;
 			default:
 				$this->messagetype = 'notice';
-				$this->message = JText::_( "LIB_DSCFORK_INVALID_TASK" );
+				$this->message = JText::_( "LIB_STRATUM_INVALID_TASK" );
 				$this->setRedirect( $redirect, $this->message, $this->messagetype );
 				return;
 				break;
@@ -1051,7 +1051,7 @@ class DSCForkController extends JControllerLegacy
 		if ( !in_array( $field, array_keys( $row->getProperties( ) ) ) )
 		{
 			$this->messagetype = 'notice';
-			$this->message = JText::_( "LIB_DSCFORK_INVALID_FIELD" ) . ": {$field}";
+			$this->message = JText::_( "LIB_STRATUM_INVALID_FIELD" ) . ": {$field}";
 			$this->setRedirect( $redirect, $this->message, $this->messagetype );
 			return;
 		}
@@ -1083,11 +1083,11 @@ class DSCForkController extends JControllerLegacy
 
 		if ( $error )
 		{
-			$this->message = JText::_( 'LIB_DSCFORK_ERROR' ) . ": " . $this->message;
+			$this->message = JText::_( 'LIB_STRATUM_ERROR' ) . ": " . $this->message;
 			$return = false;
 		} else
 		{
-			$this->message = JText::_( 'LIB_DSCFORK_STATUS_CHANGED' );
+			$this->message = JText::_( 'LIB_STRATUM_STATUS_CHANGED' );
 			$return = true;
 		}
 

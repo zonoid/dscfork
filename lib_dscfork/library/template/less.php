@@ -12,7 +12,7 @@
 
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-class DSCForkTemplateLESS
+class StratumTemplateLESS
 {
 	function __construct( $parent )
 	{
@@ -33,7 +33,7 @@ class DSCForkTemplateLESS
 			try
 			{
 				// normal Template code
-				$less = new DSCForkTemplateHelperLessc;
+				$less = new StratumTemplateHelperLessc;
 				$less->checkedCompile( $parent->API->URLtemplatepath( ) . '/less/global.less', $parent->API->URLtemplatepath( ) . '/css/global.css' );
 				$less->checkedCompile( $parent->API->URLtemplatepath( ) . '/less/default.less', $parent->API->URLtemplatepath( ) . '/css/default.css' );
 				$less->checkedCompile( $parent->API->URLtemplatepath( ) . '/less/print.less', $parent->API->URLtemplatepath( ) . '/css/print.css' );

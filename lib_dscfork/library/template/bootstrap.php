@@ -12,7 +12,7 @@
 
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-class DSCForkTemplateBootstrap
+class StratumTemplateBootstrap
 {
 
 	function __construct( $parent )
@@ -30,7 +30,7 @@ class DSCForkTemplateBootstrap
 				// generate new Bootstrap CSS files
 				try
 				{
-					$less = new DSCForkTemplateHelperLessc;
+					$less = new StratumTemplateHelperLessc;
 					// normal Bootstrap code
 					$less->checkedCompile( $parent->API->URLtemplatepath( ) . '/framework/' . $framework . '/less/bootstrap.less', $parent->API->URLtemplatepath( ) . '/css/base.css' );
 					// responsive Bootstrap code

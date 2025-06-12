@@ -103,7 +103,7 @@ defined('_JEXEC') or die('Restricted access');
      *  + Added support for Shiretoko
      */
 
-    class DSCForkBrowser 
+    class StratumBrowser
     {
         private $_agent = '';
         private $_browser_name = '';

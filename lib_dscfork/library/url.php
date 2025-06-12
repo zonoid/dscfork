@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Direct Access to this location is not allowed.' );
 
-class DSCForkUrl 
+class StratumUrl
 {
 	/**
 	 * Wrapper that adds the current Itemid to the URL
@@ -23,7 +23,7 @@ class DSCForkUrl
 	 */
 	public static function _( $url, $text, $params='', $xhtml=true, $ssl=null, $addItemid='1' ) 
 	{
-		if ($addItemid == '1') { $url = DSCForkUrl::addItemid($url); }
+		if ($addItemid == '1') { $url = StratumUrl::addItemid($url); }
 		$return = "<a href='".JRoute::_($url, $xhtml, $ssl)."' ".addslashes($params)." >".$text."</a>";
 		return $return;			
 	}
@@ -64,7 +64,7 @@ class DSCForkUrl
 		
 		if (!empty($options['update']))
 		{
-		    JHTML::_('behavior.modal', 'a.modal', array('onClose'=>'\function(){dscfork.update();}') );
+		    JHTML::_('behavior.modal', 'a.modal', array('onClose'=>'\function(){stratum.update();}') );
 		}
             else
 		{
@@ -73,8 +73,8 @@ class DSCForkUrl
 
 		// set the $handler_string based on the user's browser
         $handler_string = "{handler:'iframe',size:{x: window.innerWidth-80, y: window.innerHeight-80}, onShow:$('sbox-window').setStyles({'padding': 0})}";
-	    $browser = DSCFork::getClass( 'DSCForkBrowser', 'library.browser' );
-        if ( $browser->getBrowser() == DSCForkBrowser::BROWSER_IE ) 
+	    $browser = Stratum::getClass( 'StratumBrowser', 'library.browser' );
+        if ( $browser->getBrowser() == StratumBrowser::BROWSER_IE )
         {
             // if IE, use 
             $handler_string = "{handler:'iframe',size:{x:window.getSize().scrollSize.x-80, y: window.getSize().size.y-80}, onShow:$('sbox-window').setStyles({'padding': 0})}";            

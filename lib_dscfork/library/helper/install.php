@@ -13,13 +13,13 @@
 /** ensure this file is being included by a parent file */
 defined('_JEXEC') or die('Restricted access');
 
-class DSCForkHelperInstall extends DSCForkHelper 
+class StratumHelperInstall extends StratumHelper
 {
 	/**
-	 * Performs basic checks on your DSCFork installation to ensure it is configured OK
+	 * Performs basic checks on your Stratum installation to ensure it is configured OK
 	 * @return unknown_type
 	 */
-	function createDSCFork() 
+	function createStratum()
 	{
 		// TODO create a sample installation configuration
 	}

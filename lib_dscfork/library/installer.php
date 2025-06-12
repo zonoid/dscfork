@@ -23,7 +23,7 @@ jimport( 'joomla.installer.helper' );
 jimport( 'joomla.registry.format' );
 
 /** CHECK FIRST to see if this exists already */
-if ( !class_exists( 'DSCForkInstaller' ) )
+if ( !class_exists( 'StratumInstaller' ) )
 {
 
 	/**
@@ -38,7 +38,7 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 	 * @copyright Copyright (C) 2008 Dioscouri Design. All rights reserved.
 	 * @license Licensed under the GNU GPLv3 <http://www.gnu.org/licenses/gpl.html> or later
 	 */
-	class DSCForkInstaller extends JObject
+	class StratumInstaller extends JObject
 	{
 
 		/**
@@ -131,7 +131,7 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 			{
 				//$this->abort(JText::_('extensions path does not exist'));
 				$this->msg->type = 'notice';
-				$this->msg->message = JText::_( 'LIB_DSCFORK_EXTENSIONS_PATH_DOES_NOT_EXIST' );
+				$this->msg->message = JText::_( 'LIB_STRATUM_EXTENSIONS_PATH_DOES_NOT_EXIST' );
 				return false;
 			}
 
@@ -140,7 +140,7 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 			{
 				//$this->abort(JText::_('unable to find any packages'));
 				$this->msg->type = 'notice';
-				$this->msg->message = JText::sprintf( 'LIB_DSCFORK_NO_PACKAGES_FOUND_AT', $this->_extensionsPath );
+				$this->msg->message = JText::sprintf( 'LIB_STRATUM_NO_PACKAGES_FOUND_AT', $this->_extensionsPath );
 				return false;
 			}
 
@@ -316,14 +316,14 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 				$installer->setPath( 'source', $package['dir'] );
 			} else
 			{
-				$this->setError( "DSCForkInstaller::installExtension: " . JText::_( "LIB_DSCFORK_PACKAGE_DIR_DOES_NOT_EXIST" ) );
+				$this->setError( "StratumInstaller::installExtension: " . JText::_( "LIB_STRATUM_PACKAGE_DIR_DOES_NOT_EXIST" ) );
 				return false;
 			}
 
 			//this makes sure the manifest file is loaded into the installer object
 			if ( !$installer->setupInstall( ) )
 			{
-				$this->setError( "DSCForkInstaller::installExtension: " . JText::_( "LIB_DSCFORK_COULD_NOT_LOAD_MANIFEST_FILE" ) );
+				$this->setError( "StratumInstaller::installExtension: " . JText::_( "LIB_STRATUM_COULD_NOT_LOAD_MANIFEST_FILE" ) );
 				return false;
 			}
 
@@ -337,7 +337,7 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 			if ( !$installer->install( $package['dir'] ) )
 			{
 				//something blew up with the install if we get here
-				$this->setError( "DSCForkInstaller::installExtension: " . $installer->getError( ) );
+				$this->setError( "StratumInstaller::installExtension: " . $installer->getError( ) );
 				$result = false;
 			} else
 			{
@@ -425,7 +425,7 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 				}
 			} else
 			{
-				$this->setError( JText::_( "LIB_DSCFORK_UNABLE_TO_LOCATE_MANIFEST_FILE" ) );
+				$this->setError( JText::_( "LIB_STRATUM_UNABLE_TO_LOCATE_MANIFEST_FILE" ) );
 				return false;
 			}
 
@@ -837,17 +837,17 @@ if ( !class_exists( 'DSCForkInstaller' ) )
 			if ( sizeof( $this->_installedExtensions ) > 0 )
 			{
 				$this->msg->type = 'message';
-				$this->msg->message = JText::_( 'LIB_DSCFORK_INSTALLATION_COMPLETED' );
+				$this->msg->message = JText::_( 'LIB_STRATUM_INSTALLATION_COMPLETED' );
 				foreach ( $this->_installedExtensions as $extension )
 				{
 					$this->msg->message .= "</li>";
-					$this->msg->message .= "<li>" . JText::_( 'LIB_DSCFORK_INSTALLED' ) . " " . $extension["type"] . " " . $extension["element"];
+					$this->msg->message .= "<li>" . JText::_( 'LIB_STRATUM_INSTALLED' ) . " " . $extension["type"] . " " . $extension["element"];
 				}
 				$this->msg->message .= "</li>";
 			} else
 			{
 				$this->msg->type = 'notice';
-				$this->msg->message = JText::_( 'LIB_DSCFORK_NOTHING_INSTALLED' );
+				$this->msg->message = JText::_( 'LIB_STRATUM_NOTHING_INSTALLED' );
 			}
 		}
 

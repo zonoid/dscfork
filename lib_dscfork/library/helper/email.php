@@ -13,12 +13,12 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkHelperEmail extends DSCForkHelper
+class StratumHelperEmail extends StratumHelper
 {
 	/**
 	 * Protected! Use getInstance()
 	 */
-	protected function DSCForkHelperEmail( )
+	protected function StratumHelperEmail( )
 	{
 		parent::__construct( );
 		$this->use_html = true;
@@ -95,7 +95,7 @@ class DSCForkHelperEmail extends DSCForkHelper
 	public function getPlaceholderDefaults( )
 	{
 		$mainframe = JFactory::getApplication( );
-		$config = DSCFork::getApp();
+		$config = Stratum::getApp();
 		$site_name = $config->get( 'sitename', $mainframe->getCfg( 'sitename' ) );
 		$site_url = $config->get( 'siteurl', JURI::root( ) );
 		$user_name = JText::_( $config->get( 'default_email_user_name', 'Valued Customer' ) );

@@ -11,11 +11,11 @@
 
 defined( '_JEXEC' ) or die ;
 
-class DSCForkLoader extends JLoader
+class StratumLoader extends JLoader
 {
 	public function __construct( )
 	{
-		// Register DSCForkLoader::load as an autoload class handler.
+		// Register StratumLoader::load as an autoload class handler.
 		spl_autoload_register( array( $this, 'load' ) );
 	}
 

@@ -13,14 +13,14 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkModelElement extends DSCForkModel
+class StratumModelElement extends StratumModel
 {
 	public $cache_enabled = false;
 
 	var $title_key = 'title';
-	var $select_title_constant = 'LIB_DSCFORK_SELECT_ITEM';
-	var $select_constant = 'LIB_DSCFORK_SELECT';
-	var $clear_constant = 'LIB_DSCFORK_CLEAR_SELECTION';
+	var $select_title_constant = 'LIB_STRATUM_SELECT_ITEM';
+	var $select_constant = 'LIB_STRATUM_SELECT';
+	var $clear_constant = 'LIB_STRATUM_CLEAR_SELECTION';
 
 	public function __construct( $config = array() )
 	{
@@ -76,7 +76,7 @@ class DSCForkModelElement extends DSCForkModel
 
 		$close_window = "window.parent.SqueezeBox.close();";
 
-		$js = "dscfork.select" . $this->getName( ) . " = function(id, title, object) {
+		$js = "stratum.select" . $this->getName( ) . " = function(id, title, object) {
                         document.getElementById(object + '_id').value = id;
                         document.getElementById(object + '_name').value = title;
                         document.getElementById(object + '_name_hidden').value = title;
@@ -124,14 +124,14 @@ class DSCForkModelElement extends DSCForkModel
 		$fieldName = $control_name ? $control_name . '[' . $name . ']' : $name;
 
 		$js = "
-            dscfork.reset" . $this->getName( ) . " = function(id, title, object) {
+            stratum.reset" . $this->getName( ) . " = function(id, title, object) {
                 document.getElementById(object + '_id').value = id;
                 document.getElementById(object + '_name').value = title;
             }";
 		$doc->addScriptDeclaration( $js );
 
 		$html = '
-                    <a href="javascript:void(0);" style="color : white;" class="btn btn-danger" onclick="dscfork.reset' . $this->getName( ) . '( \'' . $value . '\', \'' . JText::_( $this->select_title_constant ) . '\', \'' . $name . '\' )">' . JText::_( $this->clear_constant ) . '
+                    <a href="javascript:void(0);" style="color : white;" class="btn btn-danger" onclick="stratum.reset' . $this->getName( ) . '( \'' . $value . '\', \'' . JText::_( $this->select_title_constant ) . '\', \'' . $name . '\' )">' . JText::_( $this->clear_constant ) . '
                     </a>
             ';
 

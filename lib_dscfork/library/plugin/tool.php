@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined('_JEXEC') or die('Restricted access');
 
-class DSCForkPluginTool extends DSCForkPlugin
+class StratumPluginTool extends StratumPlugin
 {
     /**
      * @var $_element  string  Should always correspond with the plugin's filename, 

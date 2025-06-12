@@ -4,7 +4,7 @@
  * for J1.6+
  *
  * On any pages that require ajax form validation, add this:
- * JHTML::_('script', 'validation.js', 'media/dscfork/js/');
+ * JHTML::_('script', 'validation.js', 'media/stratum/js/');
  *
  * @param task
  * @return
