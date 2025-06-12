@@ -13,14 +13,22 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
+// Assuming StratumModel is autoloaded or in the same conceptual namespace path
+// If StratumModel was namespaced, e.g., LibDscfork\Library\Model\StratumModel,
+// a 'use LibDscfork\Library\Model\StratumModel;' would be needed if not in same namespace.
+
 class StratumModelElement extends StratumModel
 {
 	public $cache_enabled = false;
 
-	var $title_key = 'title';
-	var $select_title_constant = 'LIB_STRATUM_SELECT_ITEM';
-	var $select_constant = 'LIB_STRATUM_SELECT';
-	var $clear_constant = 'LIB_STRATUM_CLEAR_SELECTION';
+	public $title_key = 'title';
+	public $select_title_constant = 'LIB_STRATUM_SELECT_ITEM';
+	public $select_constant = 'LIB_STRATUM_SELECT';
+	public $clear_constant = 'LIB_STRATUM_CLEAR_SELECTION';
 
 	public function __construct( $config = array() )
 	{
@@ -35,13 +43,13 @@ class StratumModelElement extends StratumModel
 
 			if ( !preg_match( '/(.*)Model/i', get_class( $this ), $r ) )
 			{
-				JError::raiseError( 500, JText::_( 'JLIB_APPLICATION_ERROR_MODEL_GET_NAME' ) );
+				throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_GET_NAME'), 500);
 			}
 
 			$option = 'com_' . strtolower( $r[1] );
 		}
 
-		$lang = JFactory::getLanguage( );
+		$lang = Factory::getLanguage( );
 		$lang->load( $option );
 		$lang->load( $option, JPATH_ADMINISTRATOR );
 	}
@@ -56,7 +64,7 @@ class StratumModelElement extends StratumModel
 	 */
 	function fetchElement( $name, $value = '', $control_name = '', $js_extra = '', $fieldName = '' )
 	{
-		$doc = JFactory::getDocument( );
+		$doc = Factory::getApplication()->getDocument( );
 
 		if ( empty( $fieldName ) )
 		{
@@ -71,7 +79,7 @@ class StratumModelElement extends StratumModel
 			$title = $table->$title_key;
 		} else
 		{
-			$title = JText::_( $this->select_title_constant );
+			$title = Text::_( $this->select_title_constant );
 		}
 
 		$close_window = "window.parent.SqueezeBox.close();";
@@ -94,16 +102,16 @@ class StratumModelElement extends StratumModel
 
 			if ( !preg_match( '/(.*)Model/i', get_class( $this ), $r ) )
 			{
-				JError::raiseError( 500, JText::_( 'JLIB_APPLICATION_ERROR_MODEL_GET_NAME' ) );
+				throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_GET_NAME'), 500);
 			}
 
 			$option = 'com_' . strtolower( $r[1] );
 		}
 		$link = 'index.php?option=' . $option . '&view=' . $this->getName( ) . '&tmpl=component&object=' . $name;
 
-		JHTML::_( 'behavior.modal', 'a.modal' );
+		HTMLHelper::_( 'behavior.modal', 'a.modal' );
 		$html = "\n" . '<input type="text" id="' . $name . '_name" value="' . htmlspecialchars( $title, ENT_QUOTES, 'UTF-8' ) . '" disabled="disabled" />';
-		$html .= '<a class="modal btn btn-primary" style="color : white; margin-left : 2px;" title="' . JText::_( $this->select_title_constant ) . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 500}}">' . JText::_( $this->select_constant ) . '</a>' . "\n";
+		$html .= '<a class="modal btn btn-primary" style="color : white; margin-left : 2px;" title="' . Text::_( $this->select_title_constant ) . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 500}}">' . Text::_( $this->select_constant ) . '</a>' . "\n";
 		$html .= "\n" . '<input type="hidden" id="' . $name . '_id" name="' . $fieldName . '" value="' . $value . '" />';
 		$html .= "\n" . '<input type="hidden" id="' . $name . '_name_hidden" name="' . $name . '_name_hidden" value="' . htmlspecialchars( $title, ENT_QUOTES, 'UTF-8' ) . '" />';
 
@@ -120,7 +128,7 @@ class StratumModelElement extends StratumModel
 	 */
 	function clearElement( $name, $value = '', $control_name = '' )
 	{
-		$doc = JFactory::getDocument( );
+		$doc = Factory::getApplication()->getDocument( );
 		$fieldName = $control_name ? $control_name . '[' . $name . ']' : $name;
 
 		$js = "
@@ -131,7 +139,7 @@ class StratumModelElement extends StratumModel
 		$doc->addScriptDeclaration( $js );
 
 		$html = '
-                    <a href="javascript:void(0);" style="color : white;" class="btn btn-danger" onclick="stratum.reset' . $this->getName( ) . '( \'' . $value . '\', \'' . JText::_( $this->select_title_constant ) . '\', \'' . $name . '\' )">' . JText::_( $this->clear_constant ) . '
+                    <a href="javascript:void(0);" style="color : white;" class="btn btn-danger" onclick="stratum.reset' . $this->getName( ) . '( \'' . $value . '\', \'' . Text::_( $this->select_title_constant ) . '\', \'' . $name . '\' )">' . Text::_( $this->clear_constant ) . '
                     </a>
             ';
 

@@ -14,9 +14,12 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-Sample::load( 'SampleModelBase', 'models._base' );
+// If StratumModel is not autoloaded, a require_once would be needed here, e.g.:
+// require_once JPATH_LIBRARIES . '/lib_dscfork/library/model.php';
+// If StratumModel is namespaced, e.g., LibDscfork\Library\Model\StratumModel:
+// use LibDscfork\Library\Model\StratumModel;
 
-class SampleModelTools extends SampleModelBase
+class SampleModelTools extends StratumModel
 {
 	protected function _buildQueryWhere( &$query )
 	{

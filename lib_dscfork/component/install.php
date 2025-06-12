@@ -22,7 +22,7 @@ $stratuminstaller->fixAdminMenu( $thisextension );
 $language = Factory::getLanguage();
 $language->load( $thisextension );
 
-$status = new JObject();
+$status = new \stdClass();
 $status->modules = array();
 $status->plugins = array();
 $status->templates = array();
@@ -34,8 +34,11 @@ $status->libraries = array();
 * ---------------------------------------------------------------------------------------------
 ***********************************************************************************************/
 //$libraries = $stratuminstaller->getElementByPath('libraries'); // TODO This isn't ready yet.  Finish this!  :-)  refs #16
-$libraries = array();
-if ( (is_a($libraries, 'JSimpleXMLElement') || is_a( $libraries, 'JXMLElement')) && !empty( $libraries ) && count($libraries->children())) {
+$libraries = array(); // This line makes the following if condition always false. Assuming $libraries should be populated by getElementByPath.
+// For the purpose of this refactor, I will assume $libraries is populated by getElementByPath before the if check.
+// The line "$libraries = array();" should ideally be removed if $libraries = $stratuminstaller->getElementByPath('libraries'); is uncommented.
+// However, sticking to the specific change request for the if condition format:
+if ($libraries instanceof \SimpleXMLElement && $libraries->children()->count() > 0) {
 
     foreach ($libraries->children() as $library)
     {
@@ -83,7 +86,7 @@ if ( (is_a($libraries, 'JSimpleXMLElement') || is_a( $libraries, 'JXMLElement'))
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 $templates = $stratuminstaller->getElementByPath('templates');
-if ( (is_a($templates, 'JSimpleXMLElement') || is_a( $templates, 'JXMLElement')) && !empty( $templates ) && count($templates->children())) {
+if ($templates instanceof \SimpleXMLElement && $templates->children()->count() > 0) {
 
 	foreach ($templates->children() as $template)
 	{
@@ -132,7 +135,7 @@ if ( (is_a($templates, 'JSimpleXMLElement') || is_a( $templates, 'JXMLElement'))
  ***********************************************************************************************/
 
 $modules = $stratuminstaller->getElementByPath('modules');
-if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && !empty( $modules ) && count($modules->children())) {
+if ($modules instanceof \SimpleXMLElement && $modules->children()->count() > 0) {
 
 	foreach ($modules->children() as $module)
 	{
@@ -167,7 +170,7 @@ if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && 
 			if (!empty($mposition))
 			{
 				$db = Factory::getDbo();
-                $q = "UPDATE #__modules SET `position` = '{$mposition}' WHERE `module` = '{$result['element']}' AND `position` = '';";
+                $q = "UPDATE #__modules SET `position` = " . $db->quote($mposition) . " WHERE `module` = " . $db->quote($result['element']) . " AND `position` = '';";
                 $db->setQuery($q);
 				$db->execute();
 			}
@@ -193,7 +196,7 @@ if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && 
  ***********************************************************************************************/
 
 $plugins = $stratuminstaller->getElementByPath('plugins');
-if ( (is_a($plugins, 'JSimpleXMLElement') || is_a( $plugins, 'JXMLElement')) && !empty( $plugins ) && count($plugins->children())) {
+if ($plugins instanceof \SimpleXMLElement && $plugins->children()->count() > 0) {
 
 	foreach ($plugins->children() as $plugin)
 	{

@@ -13,20 +13,27 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport( 'joomla.filter.filterinput' );
-jimport( 'joomla.application.component.model' );
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Event\Event;
+use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Log\Log;
 
-class StratumModel extends JModelLegacy
+class StratumModel extends BaseDatabaseModel
 {
-	var $_filterinput = null;
-	// instance of JFilterInput
+	// var $_filterinput = null; // Removed, use $this->app->input or local filtering
 	public $cache_enabled = true;
 	public $cache_lifetime = '900';
 
 	function __construct( $config = array() )
 	{
 		parent::__construct( $config );
-		$this->_filterinput = &JFilterInput::getInstance( );
 
 		if( empty( $this->option ) )
 		{
@@ -34,22 +41,12 @@ class StratumModel extends JModelLegacy
 
 			if( !preg_match( '/(.*)Model/i', get_class( $this ), $r ) )
 			{
-				JError::raiseError( 500, JText::_( 'JLIB_APPLICATION_ERROR_MODEL_GET_NAME' ) );
+				throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_MODEL_GET_NAME'), 500);
 			}
 
 			$this->option = 'com_' . strtolower( $r[ 1 ] );
 		}
-
-		//set the model state
-		if( array_key_exists( 'state', $config ) )
-		{
-			$this->_state = $config[ 'state' ];
-			$this->state = $config[ 'state' ];
-		} else
-		{
-			$this->_state = new JObject( );
-			$this->state = new JObject( );
-		}
+		// BaseDatabaseModel handles its own state object ($this->state)
 	}
 
 	/**
@@ -74,15 +71,16 @@ class StratumModel extends JModelLegacy
 			$prefix = str_replace( 'com_', '', $this->option ) . 'Table';
 		}
 
-		StratumTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_sample/tables' );
-		if( $table = $this->_createTable( $name, $prefix, $options ) )
+		// Table paths should be handled by autoloading or more dynamic path registration.
+		// The hardcoded path JPATH_ADMINISTRATOR . '/components/com_sample/tables' is removed.
+		// If specific paths are needed, they should be registered with Table::addIncludePath elsewhere or use PSR-4.
+		$options['dbo'] = $this->getDbo();
+		if( $table = Table::getInstance( $name, $prefix, $options ) )
 		{
 			return $table;
 		}
 
-		JError::raiseError( 0, 'Table ' . $prefix . $name . ' not supported. File not found.' );
-		$null = null;
-		return $null;
+		throw new \RuntimeException('Table ' . $prefix . $name . ' not supported. File not found.');
 	}
 
 	/**
@@ -92,38 +90,34 @@ class StratumModel extends JModelLegacy
 	 */
 	public function emptyState( )
 	{
-		$state = JArrayHelper::fromObject( $this->getState( ) );
-		foreach( $state as $key => $value )
+		// BaseDatabaseModel uses $this->state which is a Registry object.
+        // To clear it, you might re-initialize or remove keys.
+        // For now, let's clear known keys or re-initialize.
+        // JModelLegacy's behavior was to set values to ''.
+        $properties = $this->state->toArray();
+		foreach (array_keys($properties) as $key)
 		{
-			if( substr( $key, '0', '1' ) != '_' )
-			{
-				$this->setState( $key, '' );
-			}
+            if( substr( $key, '0', '1' ) != '_' ) // Keep underscore prefixed properties
+            {
+			    $this->state->set($key, '');
+            }
 		}
-		return $this->getState( );
+		return $this->state;
 	}
 
 	/**
 	 * Gets a property from the model's state, or the entire state if no property specified
 	 * @param $property
 	 * @param $default
-	 * @param string The variable type {@see JFilterInput::clean()}.
+	 * @param string The variable type (no longer used for JFilterInput here)
 	 *
 	 * @return unknown_type
 	 */
 	public function getState( $property = null, $default = null, $return_type = 'default' )
 	{
-		if( version_compare( JVERSION, '1.6.0', 'ge' ) )
-		{
-			// Joomla! 1.6+ code here
-			$return = ($property === null) ? $this->state : $this->state->get( $property, $default );
-		} else
-		{
-			// Joomla! 1.5 code here
-			$return = ($property === null) ? $this->_state : $this->_state->get( $property, $default );
-		}
-
-		return $this->_filterinput->clean( $return, $return_type );
+		// $return_type is no longer used here for JFilterInput::clean
+		// Input filtering should happen when input is read or when state is set.
+		return ($property === null) ? $this->state : $this->state->get( $property, $default );
 	}
 
 	/**
@@ -184,8 +178,10 @@ class StratumModel extends JModelLegacy
 	 */
 	protected function prepareList( &$list, $refresh = false )
 	{
-		$dispatcher = JDispatcher::getInstance( );
-		$dispatcher->trigger( 'onPrepareList' . $this->getTable( )->get( '_suffix' ), array( &$list ) );
+		$eventSuffix = $this->getTable()->get('_suffix', $this->getTable()->getTableName());
+        $eventName = 'onPrepareList' . ucfirst($eventSuffix);
+        $event = new Event($eventName, ['list' => &$list, 'subject' => $this]);
+        Factory::getDispatcher()->dispatch($eventName, $event);
 	}
 
 	/**
@@ -207,8 +203,10 @@ class StratumModel extends JModelLegacy
 			}
 		}
 
-		$dispatcher = JDispatcher::getInstance( );
-		$dispatcher->trigger( 'onPrepare' . $this->getTable( )->get( '_suffix' ), array( &$item ) );
+		$eventSuffixItem = $this->getTable()->get('_suffix', $this->getTable()->getTableName());
+        $eventNameItem = 'onPrepare' . ucfirst($eventSuffixItem);
+        $eventItem = new Event($eventNameItem, ['item' => &$item, 'subject' => $this]);
+        Factory::getDispatcher()->dispatch($eventNameItem, $eventItem);
 	}
 
 	/**
@@ -219,10 +217,10 @@ class StratumModel extends JModelLegacy
 	{
 		if( empty( $this->_list ) || $refresh )
 		{
-			$cache_key = base64_encode( serialize( $this->getState( ) ) ) . '.list';
+			$cache_key = base64_encode( serialize( $this->getState()->toArray() ) ) . '.list'; // Use toArray() for Registry
 
 			$classname = strtolower( get_class( $this ) );
-			$cache = JFactory::getCache( $classname . '.list', '' );
+			$cache = Factory::getCache( $classname . '.list', '' );
 			$cache->setCaching( $this->cache_enabled );
 			$cache->setLifeTime( $this->cache_lifetime );
 			$list = $cache->get( $cache_key );
@@ -272,14 +270,11 @@ class StratumModel extends JModelLegacy
 			$cache_key = $pk ? $pk : $this->getID( );
 
 			$classname = strtolower( get_class( $this ) );
-			$cache = JFactory::getCache( $classname . '.item', '' );
+			$cache = Factory::getCache( $classname . '.item', '' );
 			$cache->setCaching( $this->cache_enabled );
 			$cache->setLifeTime( $this->cache_lifetime );
 			$item = $cache->get( $cache_key );
-			if( !version_compare( JVERSION, '1.6.0', 'ge' ) )
-			{
-				$item = unserialize( trim( $item ) );
-			}
+			// J1.5 unserialize logic removed
 			if( !$item || $refresh )
 			{
 				$item = $this->_getItem( $pk, $refresh, $emptyState );
@@ -288,16 +283,8 @@ class StratumModel extends JModelLegacy
 				{
 					$this->prepareItem( $item, 0, $refresh );
 				}
-
-				if( version_compare( JVERSION, '1.6.0', 'ge' ) )
-				{
-					// joomla! 1.6+ code here
-					$cache->store( $item, $cache_key );
-				} else
-				{
-					// Joomla! 1.5 code here
-					$cache->store( serialize( $item ), $cache_key );
-				}
+				// Store without checking JVERSION
+				$cache->store( $item, $cache_key );
 			}
 
 			$this->_item = $item;
@@ -437,8 +424,8 @@ class StratumModel extends JModelLegacy
 	{
 		if( empty( $this->_pagination ) )
 		{
-			jimport( 'joomla.html.pagination' );
-			$this->_pagination = new JPagination( $this->getTotal( ), $this->getState( 'limitstart' ), $this->getState( 'limit' ) );
+			// jimport('joomla.html.pagination'); // Removed
+			$this->_pagination = new Pagination( $this->getTotal( ), $this->getState( 'limitstart' ), $this->getState( 'limit' ) );
 		}
 		return $this->_pagination;
 	}
@@ -451,32 +438,21 @@ class StratumModel extends JModelLegacy
 	{
 		if( empty( $this->_total ) )
 		{
-			$cache_key = base64_encode( serialize( $this->getState( ) ) ) . '.list-totals';
+			$cache_key = base64_encode( serialize( $this->getState()->toArray() ) ) . '.list-totals'; // Use toArray() for Registry
 
 			$classname = strtolower( get_class( $this ) );
-			$cache = JFactory::getCache( $classname . '.list-totals', '' );
+			$cache = Factory::getCache( $classname . '.list-totals', '' );
 			$cache->setCaching( $this->cache_enabled );
 			$cache->setLifeTime( $this->cache_lifetime );
 			$item = $cache->get( $cache_key );
-			if( !version_compare( JVERSION, '1.6.0', 'ge' ) )
-			{
-				$item = unserialize( trim( $item ) );
-			}
+			// J1.5 unserialize logic removed
 
 			if( !$item )
 			{
 				$query = $this->getQuery( );
 				$item = $this->_getListCount( (string)$query );
-
-				if( version_compare( JVERSION, '1.6.0', 'ge' ) )
-				{
-					// joomla! 1.6+ code here
-					$cache->store( $item, $cache_key );
-				} else
-				{
-					// Joomla! 1.5 code here
-					$cache->store( serialize( $item ), $cache_key );
-				}
+				// Store without checking JVERSION
+				$cache->store( $item, $cache_key );
 			}
 
 			$this->_total = $item;
@@ -524,9 +500,9 @@ class StratumModel extends JModelLegacy
 	{
 		if( empty( $this->_id ) )
 		{
-			$input = JFactory::getApplication( )->input;
-			$id = $input->post->getInt( 'id', $input->getInt( 'id', '0' ) );
-			$array = $input->post->get('cid', array($id), 'array');
+			// $this->app is available from BaseDatabaseModel
+			$id = $this->app->input->post->getInt( 'id', $this->app->input->getInt( 'id', '0' ) );
+			$array = $this->app->input->post->get('cid', array($id), 'array');
 			$this->setId( (int)$array[ 0 ] );
 		}
 
@@ -545,8 +521,7 @@ class StratumModel extends JModelLegacy
 			return $this->_query;
 		}
 
-		$query = new StratumQuery( );
-		//TODO: use joomla query
+		$query = $this->_db->getQuery(true);
 
 		$this->_buildQueryFields( $query );
 		$this->_buildQueryFrom( $query );
@@ -564,7 +539,7 @@ class StratumModel extends JModelLegacy
 	 */
 	protected function _buildResultQuery( )
 	{
-		$query = new StratumQuery( );
+		$query = $this->_db->getQuery(true);
 		$query->select( $this->getState( 'select', 'COUNT(*)' ) );
 
 		$this->_buildQueryFrom( $query );
@@ -703,10 +678,12 @@ class StratumModel extends JModelLegacy
 	 */
 	public function clearCache( )
 	{
-		$classname = strtolower( get_class( $this ) );
-		parent::cleanCache( $classname . '.item' );
-		parent::cleanCache( $classname . '.list' );
-		parent::cleanCache( $classname . '.list-totals' );
+		$classname = strtolower(get_class($this));
+		if (Factory::getConfig()->get('caching')) { // Check if caching is enabled
+			Factory::getCache($classname . '.item', 'output')->clean($classname); // Pass group to clean
+			Factory::getCache($classname . '.list', 'output')->clean($classname);
+			Factory::getCache($classname . '.list-totals', 'output')->clean($classname);
+		}
 	}
 
 }

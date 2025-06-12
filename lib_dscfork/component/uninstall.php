@@ -20,7 +20,7 @@ $stratuminstaller->manifest = !empty($this->manifest) ? $this->manifest : $strat
 $language = Factory::getLanguage();
 $language->load( $thisextension );
 
-$status = new JObject();
+$status = new \stdClass();
 $status->modules = array();
 $status->plugins = array();
 $status->templates = array();
@@ -31,7 +31,7 @@ $status->templates = array();
 * ---------------------------------------------------------------------------------------------
 ***********************************************************************************************/
 $templates = $stratuminstaller->getElementByPath('templates');
-if ( (is_a($templates, 'JSimpleXMLElement') || is_a( $templates, 'JXMLElement')) && !empty( $templates ) && count($templates->children())) {
+if ($templates instanceof \SimpleXMLElement && $templates->children()->count() > 0) {
 
     foreach ($templates->children() as $template)
     {
@@ -74,7 +74,7 @@ if ( (is_a($templates, 'JSimpleXMLElement') || is_a( $templates, 'JXMLElement'))
  ***********************************************************************************************/
 
 $modules = $stratuminstaller->getElementByPath('modules');
-if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && !empty( $modules ) && count($modules->children())) {
+if ($modules instanceof \SimpleXMLElement && $modules->children()->count() > 0) {
 
     foreach ($modules->children() as $module)
     {
@@ -120,7 +120,7 @@ if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && 
  ***********************************************************************************************/
 
 $plugins = $stratuminstaller->getElementByPath('plugins');
-if ( (is_a($plugins, 'JSimpleXMLElement') || is_a( $plugins, 'JXMLElement')) && !empty( $plugins ) && count($plugins->children())) {
+if ($plugins instanceof \SimpleXMLElement && $plugins->children()->count() > 0) {
 
     foreach ($plugins->children() as $plugin)
     {

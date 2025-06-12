@@ -30,10 +30,13 @@
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-// TODO: J4/5 Replace jimport with 'use' statement.
-//jimport( 'joomla.application.component.helper' );
-// TODO: J4/5 Replace jimport with 'use' statement.
-//jimport( 'joomla.application.component.model' );
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Log\Log;
 
 //TODO: UPDATE MODAL ELEMENT WITH THE LATEST JOOMLA ELEMENT MODAL
 
@@ -44,16 +47,16 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
  * @subpackage	Content
  * @since		1.5
  */
-class SampleModelElementArticle extends JModel
+class SampleModelElementArticle extends ListModel
 {
 	/**
 	 * Content data in category array
 	 *
 	 * @var array
 	 */
-	var $_list = null;
+	protected $_list = null;
 
-	var $_page = null;
+	protected $_page = null;
 
 	/**
 	 * Method to get content article data for the frontpage
@@ -62,7 +65,7 @@ class SampleModelElementArticle extends JModel
 	 */
 	function getList( )
 	{
-		$mainframe = JFactory::getApplication( );
+		$app = Factory::getApplication( ); // Changed $mainframe to $app for clarity
 
 		if( !empty( $this->_list ) )
 		{
@@ -70,22 +73,22 @@ class SampleModelElementArticle extends JModel
 		}
 
 		// Initialize variables
-		$db = &$this->getDbo( );
+		$db = $this->getDbo( ); // Use $this->getDbo() from ListModel
 		$filter = null;
 
 		// Get some variables from the request
-		$sectionid = $mainframe->input->getInt( 'sectionid', -1 );
+		$sectionid = $app->input->getInt( 'sectionid', -1 ); // Use $app
 		$redirect = $sectionid;
-		$option = $mainframe->input->getCmd( 'option' );
-		$filter_order = $mainframe->getUserStateFromRequest( 'articleelement.filter_order', 'filter_order', '', 'cmd' );
-		$filter_order_Dir = $mainframe->getUserStateFromRequest( 'articleelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$catid = $mainframe->getUserStateFromRequest( 'articleelement.catid', 'catid', 0, 'int' );
-		$filter_authorid = $mainframe->getUserStateFromRequest( 'articleelement.filter_authorid', 'filter_authorid', 0, 'int' );
-		$filter_sectionid = $mainframe->getUserStateFromRequest( 'articleelement.filter_sectionid', 'filter_sectionid', -1, 'int' );
-		$limit = $mainframe->getUserStateFromRequest( 'global.list.limit', 'limit', $mainframe->getCfg( 'list_limit' ), 'int' );
-		$limitstart = $mainframe->getUserStateFromRequest( 'articleelement.limitstart', 'limitstart', 0, 'int' );
-		$search = $mainframe->getUserStateFromRequest( 'articleelement.search', 'search', '', 'string' );
-		$search = JString::strtolower( $search );
+		$option = $app->input->getCmd( 'option' ); // Use $app
+		$filter_order = $app->getUserStateFromRequest( 'articleelement.filter_order', 'filter_order', '', 'cmd' ); // Use $app
+		$filter_order_Dir = $app->getUserStateFromRequest( 'articleelement.filter_order_Dir', 'filter_order_Dir', '', 'word' ); // Use $app
+		$catid = $app->getUserStateFromRequest( 'articleelement.catid', 'catid', 0, 'int' ); // Use $app
+		$filter_authorid = $app->getUserStateFromRequest( 'articleelement.filter_authorid', 'filter_authorid', 0, 'int' ); // Use $app
+		$filter_sectionid = $app->getUserStateFromRequest( 'articleelement.filter_sectionid', 'filter_sectionid', -1, 'int' ); // Use $app
+		$limit = $app->getUserStateFromRequest( 'global.list.limit', 'limit', $app->getCfg( 'list_limit' ), 'int' ); // Use $app
+		$limitstart = $app->getUserStateFromRequest( 'articleelement.limitstart', 'limitstart', 0, 'int' ); // Use $app
+		$search = $app->getUserStateFromRequest( 'articleelement.search', 'search', '', 'string' ); // Use $app
+		$search = strtolower( $search ); // Replaced JString::strtolower
 
 		//$where[] = "c.state >= 0";
 		$where[ ] = "c.state != -2";
@@ -141,9 +144,7 @@ class SampleModelElementArticle extends JModel
 		$total = $db->loadResult( );
 
 		// Create the pagination object
-		// TODO: J4/5 Replace jimport with 'use' statement.
-		//jimport( 'joomla.html.pagination' );
-		$this->_page = new JPagination( $total, $limitstart, $limit );
+		$this->_page = new Pagination( $total, $limitstart, $limit );
 
 		// Get the articles
 		$query = 'SELECT c.*, g.name AS groupname, cc.title as cctitle, u.name AS editor, f.content_id AS frontpage, s.title AS section_name, v.name AS author' . ' FROM #__content AS c' . ' LEFT JOIN #__categories AS cc ON cc.id = c.catid' . ' LEFT JOIN #__sections AS s ON s.id = c.sectionid' . ' LEFT JOIN #__groups AS g ON g.id = c.access' . ' LEFT JOIN #__users AS u ON u.id = c.checked_out' . ' LEFT JOIN #__users AS v ON v.id = c.created_by' . ' LEFT JOIN #__content_frontpage AS f ON f.content_id = c.id' . $where . $order;
@@ -153,8 +154,8 @@ class SampleModelElementArticle extends JModel
 		// If there is a db query error, throw a HTTP 500 and exit
 		if( $db->getErrorNum( ) )
 		{
-			// TODO: J4/5 Replace JError with appropriate Joomla 4/5 error handling or messaging (e.g., Factory::getApplication()->enqueueMessage).
-			// JError::raiseError( 500, $db->stderr( ) );
+			Factory::getApplication()->enqueueMessage($db->stderr(), 'error');
+			Log::add($db->stderr(), Log::ERROR, 'database'); // Optional: Log the error
 			return false;
 		}
 
@@ -184,20 +185,20 @@ class SampleModelElementArticle extends JModel
 	 */
 	function _fetchElement( $name, $value = '', $node = '', $control_name = '' )
 	{
-		$mainframe = JFactory::getApplication( );
+		$app = Factory::getApplication( ); // Changed $mainframe to $app
 
-		$db = JFactory::getDbo( );
-		$doc = JFactory::getDocument( );
-		$template = $mainframe->getTemplate( );
+		$db = $this->getDbo( ); // Use $this->getDbo()
+		$doc = Factory::getApplication()->getDocument( );
+		$template = $app->getTemplate( ); // Use $app
 		$fieldName = $control_name ? $control_name . '[' . $name . ']' : $name;
-		$article = &JTable::getInstance( 'content' );
+		$article = Table::getInstance('Content', 'JTable', array('dbo' => $this->getDbo()));
 		if( $value )
 		{
 			$article->load( $value );
 			$title = $article->title;
 		} else
 		{
-			$title = JText::_( 'LIB_STRATUM_SELECT_AN_ARTICLE' );
+			$title = Text::_( 'LIB_STRATUM_SELECT_AN_ARTICLE' );
 		}
 
 		$js = "
@@ -210,10 +211,10 @@ class SampleModelElementArticle extends JModel
 
 		$link = 'index.php?option=com_sample&task=elementArticle&tmpl=component&object=' . $name;
 
-		JHTML::_( 'behavior.modal', 'a.modal' );
+		HTMLHelper::_( 'behavior.modal', 'a.modal' );
 		$html = "\n" . '<div style="float: left;"><input style="background: #ffffff;" type="text" id="' . $name . '_name" value="' . htmlspecialchars( $title, ENT_QUOTES, 'UTF-8' ) . '" disabled="disabled" /></div>';
-		// $html .= "\n &nbsp; <input class=\"inputbox modal-button\" type=\"button\" value=\"".JText::_('Select')."\" />";
-		$html .= '<div class="button2-left"><div class="blank"><a class="modal" title="' . JText::_( 'Select an Article' ) . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 500}}">' . JText::_( 'LIB_STRATUM_SELECT' ) . '</a></div></div>' . "\n";
+		// $html .= "\n &nbsp; <input class=\"inputbox modal-button\" type=\"button\" value=\"".Text::_('Select')."\" />";
+		$html .= '<div class="button2-left"><div class="blank"><a class="modal" title="' . Text::_( 'Select an Article' ) . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 500}}">' . Text::_( 'LIB_STRATUM_SELECT' ) . '</a></div></div>' . "\n";
 		$html .= "\n" . '<input type="hidden" id="' . $name . '_id" name="' . $fieldName . '" value="' . (int)$value . '" />';
 
 		return $html;
@@ -230,11 +231,11 @@ class SampleModelElementArticle extends JModel
 	function _clearElement( $name, $value = '', $node = '', $control_name = '' )
 	{
 
-		$mainframe = JFactory::getApplication( );
+		$app = Factory::getApplication( ); // Changed $mainframe to $app
 
-		$db = JFactory::getDbo( );
-		$doc = JFactory::getDocument( );
-		$template = $mainframe->getTemplate( );
+		$db = $this->getDbo( ); // Use $this->getDbo()
+		$doc = Factory::getApplication()->getDocument( );
+		$template = $app->getTemplate( ); // Use $app
 		$fieldName = $control_name ? $control_name . '[' . $name . ']' : $name;
 
 		$js = "
@@ -246,7 +247,7 @@ class SampleModelElementArticle extends JModel
 
 		$html = '<div class="button2-left">
 		<div class="blank">
-		<a href="javascript::void();" onclick="resetElement( \'' . $value . '\', \'' . JText::_( 'Select an Article' ) . '\', \'' . $name . '\' )">' . JText::_( 'Clear Selection' ) . '</a>
+		<a href="javascript::void();" onclick="resetElement( \'' . $value . '\', \'' . Text::_( 'Select an Article' ) . '\', \'' . $name . '\' )">' . Text::_( 'Clear Selection' ) . '</a>
 		</div></div>' . "\n";
 
 		return $html;

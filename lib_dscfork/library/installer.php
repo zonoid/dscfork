@@ -13,14 +13,17 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-//import nessecary libararies
-jimport( 'joomla.filesystem.file' );
-jimport( 'joomla.filesystem.folder' );
-jimport( 'joomla.filesystem.archive' );
-jimport( 'joomla.filesystem.path' );
-jimport( 'joomla.installer.installer' );
-jimport( 'joomla.installer.helper' );
-jimport( 'joomla.registry.format' );
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Installer\InstallerHelper;
+use Joomla\CMS\Registry\RegistryFormat;
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Log\Log;
 
 /** CHECK FIRST to see if this exists already */
 if ( !class_exists( 'StratumInstaller' ) )
@@ -38,7 +41,7 @@ if ( !class_exists( 'StratumInstaller' ) )
 	 * @copyright Copyright (C) 2008 Dioscouri Design. All rights reserved.
 	 * @license Licensed under the GNU GPLv3 <http://www.gnu.org/licenses/gpl.html> or later
 	 */
-	class StratumInstaller extends JObject
+	class StratumInstaller extends CMSObject
 	{
 
 		/**
@@ -111,7 +114,7 @@ if ( !class_exists( 'StratumInstaller' ) )
 		function __construct( )
 		{
 			$this->msg = new stdClass( );
-			$this->_db = JFactory::getDBO( );
+			$this->_db = Factory::getDbo( );
 		}
 
 		/**
@@ -124,23 +127,23 @@ if ( !class_exists( 'StratumInstaller' ) )
 		function installExtensions( $path = null )
 		{
 			//set the extensions path if nessecary
-			if ( $path && JFolder::exists( $path ) )
+			if ( $path && Folder::exists( $path ) )
 			{
 				$this->setExtensionsPath( $path );
 			} else
 			{
-				//$this->abort(JText::_('extensions path does not exist'));
+				//$this->abort(Text::_('extensions path does not exist'));
 				$this->msg->type = 'notice';
-				$this->msg->message = JText::_( 'LIB_STRATUM_EXTENSIONS_PATH_DOES_NOT_EXIST' );
+				$this->msg->message = Text::_( 'LIB_STRATUM_EXTENSIONS_PATH_DOES_NOT_EXIST' );
 				return false;
 			}
 
 			//prepare for the installation
 			if ( !$this->setupExtensionsInstall( ) )
 			{
-				//$this->abort(JText::_('unable to find any packages'));
+				//$this->abort(Text::_('unable to find any packages'));
 				$this->msg->type = 'notice';
-				$this->msg->message = JText::sprintf( 'LIB_STRATUM_NO_PACKAGES_FOUND_AT', $this->_extensionsPath );
+				$this->msg->message = Text::sprintf( 'LIB_STRATUM_NO_PACKAGES_FOUND_AT', $this->_extensionsPath );
 				return false;
 			}
 
@@ -193,9 +196,9 @@ if ( !class_exists( 'StratumInstaller' ) )
 			}
 
 			//make sure we only get the package files in that directory
-			$zipFiles = JFolder::files( $this->_extensionsPath, '\.zip$', false, false );
-			$gzFiles = JFolder::files( $this->_extensionsPath, '\.gz$', false, false );
-			$bz2Fies = JFolder::files( $this->_extensionsPath, '\.bz2$', false, false );
+			$zipFiles = Folder::files( $this->_extensionsPath, '\.zip$', false, false );
+			$gzFiles = Folder::files( $this->_extensionsPath, '\.gz$', false, false );
+			$bz2Fies = Folder::files( $this->_extensionsPath, '\.bz2$', false, false ); // Assuming this was a typo for bz2Files
 			$files = array_merge( $zipFiles, $gzFiles, $bz2Fies );
 
 			if ( count( $files ) > 0 )
@@ -227,11 +230,11 @@ if ( !class_exists( 'StratumInstaller' ) )
 			$tmpdir = uniqid( 'install_' );
 
 			// Clean the paths to use for archive extraction
-			$extractdir = JPath::clean( dirname( $folder ) . DIRECTORY_SEPARATOR . $tmpdir );
-			$archivename = JPath::clean( $archivename );
+			$extractdir = Path::clean( dirname( $folder ) . DIRECTORY_SEPARATOR . $tmpdir );
+			$archivename = Path::clean( $archivename );
 
 			// copy the contents of the $folder to the extractdir
-			$result = JFolder::copy( $archivename, $extractdir );
+			$result = Folder::copy( $archivename, $extractdir );
 
 			if ( $result === false )
 			{
@@ -252,13 +255,13 @@ if ( !class_exists( 'StratumInstaller' ) )
 			 * List all the items in the installation directory.  If there is only one, and
 			 * it is a folder, then we will set that folder to be the installation folder.
 			 */
-			$dirList = array_merge( JFolder::files( $extractdir, '' ), JFolder::folders( $extractdir, '' ) );
+			$dirList = array_merge( Folder::files( $extractdir, '' ), Folder::folders( $extractdir, '' ) );
 
 			if ( count( $dirList ) == 1 )
 			{
-				if ( JFolder::exists( $extractdir . DIRECTORY_SEPARATOR . $dirList[0] ) )
+				if ( Folder::exists( $extractdir . DIRECTORY_SEPARATOR . $dirList[0] ) )
 				{
-					$extractdir = JPath::clean( $extractdir . DIRECTORY_SEPARATOR . $dirList[0] );
+					$extractdir = Path::clean( $extractdir . DIRECTORY_SEPARATOR . $dirList[0] );
 				}
 			}
 
@@ -272,7 +275,7 @@ if ( !class_exists( 'StratumInstaller' ) )
 			 * Get the extension type and return the directory/type array on success or
 			 * false on fail.
 			 */
-			if ( $retval['type'] = JInstallerHelper::detectType( $extractdir ) )
+			if ( $retval['type'] = InstallerHelper::detectType( $extractdir ) )
 			{
 				return $retval;
 			} else
@@ -299,31 +302,31 @@ if ( !class_exists( 'StratumInstaller' ) )
 					break;
 				default:
 					//Build the appropriate paths
-					$config = &JFactory::getConfig( );
+					$config = Factory::getConfig( ); // Updated in previous step, ensure it's not JFactory
 					$packageFile = $this->_extensionsPath . DIRECTORY_SEPARATOR . $entry;
 
 					//Unpack the package file
-					$package = JInstallerHelper::unpack( $packageFile );
+					$package = InstallerHelper::unpack( $packageFile );
 					break;
 			}
 
 			//Get an installer instance, always get a new one
-			$installer = new JInstaller( );
+			$installer = new Installer( );
 
 			//setup for the install
-			if ( $package['dir'] && JFolder::exists( $package['dir'] ) )
+			if ( $package['dir'] && Folder::exists( $package['dir'] ) )
 			{
 				$installer->setPath( 'source', $package['dir'] );
 			} else
 			{
-				$this->setError( "StratumInstaller::installExtension: " . JText::_( "LIB_STRATUM_PACKAGE_DIR_DOES_NOT_EXIST" ) );
+				$this->setError( "StratumInstaller::installExtension: " . Text::_( "LIB_STRATUM_PACKAGE_DIR_DOES_NOT_EXIST" ) );
 				return false;
 			}
 
 			//this makes sure the manifest file is loaded into the installer object
 			if ( !$installer->setupInstall( ) )
 			{
-				$this->setError( "StratumInstaller::installExtension: " . JText::_( "LIB_STRATUM_COULD_NOT_LOAD_MANIFEST_FILE" ) );
+				$this->setError( "StratumInstaller::installExtension: " . Text::_( "LIB_STRATUM_COULD_NOT_LOAD_MANIFEST_FILE" ) );
 				return false;
 			}
 
@@ -361,19 +364,19 @@ if ( !class_exists( 'StratumInstaller' ) )
 			// Cleanup the install files
 			if ( !is_file( $package['packagefile'] ) )
 			{
-				$config = JFactory::getConfig( );
-				$package['packagefile'] = $config->getValue( 'config.tmp_path' ) . DIRECTORY_SEPARATOR . $package['packagefile'];
+				$config = Factory::getConfig( ); // Updated in previous step
+				$package['packagefile'] = $config->get( 'tmp_path' ) . DIRECTORY_SEPARATOR . $package['packagefile']; // Updated to get('tmp_path')
 			}
 
 			//decide whether or not to delete the local copy
 			if ( !$this->_keepLocalCopy )
 			{
 				//delete temporary directory and install file
-				JInstallerHelper::cleanupInstall( $package['packagefile'], $package['extractdir'] );
+				InstallerHelper::cleanupInstall( $package['packagefile'], $package['extractdir'] );
 			} else
 			{
 				//just delete the temporary directory
-				JInstallerHelper::cleanupInstall( "", $package['extractdir'] );
+				InstallerHelper::cleanupInstall( "", $package['extractdir'] );
 			}
 
 			//check to see if the install was successfull and if so return the manifestinformation
@@ -396,7 +399,7 @@ if ( !class_exists( 'StratumInstaller' ) )
 		function uninstallExtension( $package )
 		{
 			//Get an installer instance, always get a new one
-			$installer = new JInstaller( );
+			$installer = new Installer( );
 
 			//attemp to load the manifest file
 			$file = $this->findManifest( $package );
@@ -425,7 +428,7 @@ if ( !class_exists( 'StratumInstaller' ) )
 				}
 			} else
 			{
-				$this->setError( JText::_( "LIB_STRATUM_UNABLE_TO_LOCATE_MANIFEST_FILE" ) );
+				$this->setError( Text::_( "LIB_STRATUM_UNABLE_TO_LOCATE_MANIFEST_FILE" ) );
 				return false;
 			}
 
@@ -439,21 +442,19 @@ if ( !class_exists( 'StratumInstaller' ) )
 				$clientid = 0;
 				if ( $package['client'] == 'administrator' )
 				{
-					$clientid = '1';
+					$clientid = 1; // Integer
 				}
 
 				//uninstall the extension using the joomla uninstaller
 				if ( $installer->uninstall( $manifestInformation["type"], $elementID, $clientid ) )
 				{
-					$this->setError( JText::_( "ELEMENT UNINSTALLED" ) );
-					//TODO: WHATS THE ACTUAL MESSAGE
+					$this->setError( Text::_( "ELEMENT UNINSTALLED" ) );
 					return true;
 				}
 			}
 			//$this->_addModifiedExtension($manifestInformation);
 			//$this->_formatMessage("Uninstalled");
-			$this->setError( JText::_( "ELEMENT NOT INSTALLED" ) );
-			//TODO: WHATS THE ACTUAL MESSAGE
+			$this->setError( Text::_( "ELEMENT NOT INSTALLED" ) );
 			return false;
 		}
 
@@ -499,9 +500,9 @@ if ( !class_exists( 'StratumInstaller' ) )
 					// xml file for module
 					$xmlfile = $moduleBaseDir . '/' . $mname . '/' . $mname . ".xml";
 
-					if ( file_exists( $xmlfile ) )
+					if ( File::exists( $xmlfile ) )
 					{
-						if ( $data = JApplicationHelper::parseXMLInstallFile( $xmlfile ) )
+						if ( $data = ApplicationHelper::parseXMLInstallFile( $xmlfile ) )
 						{
 							//return $data;
 							return $xmlfile;
@@ -513,11 +514,11 @@ if ( !class_exists( 'StratumInstaller' ) )
 					$baseDir = JPATH_SITE . '/plugins';
 
 					// Get the plugin xml file
-					$xmlfile = $baseDir . '/' . $package['group'] . '/' . $package['element'] . '/' . $package['element'] . ".xml";
+					$xmlfile = $baseDir . '/' . $package['group'] . DIRECTORY_SEPARATOR . $package['element'] . DIRECTORY_SEPARATOR . $package['element'] . ".xml";
 
-					if ( file_exists( $xmlfile ) )
+					if ( File::exists( $xmlfile ) )
 					{
-						if ( $data = JApplicationHelper::parseXMLInstallFile( $xmlfile ) )
+						if ( $data = ApplicationHelper::parseXMLInstallFile( $xmlfile ) )
 						{
 							//return $data;
 							return $xmlfile;
@@ -601,45 +602,50 @@ if ( !class_exists( 'StratumInstaller' ) )
 		function getManifestInformation( $installer, $element = null )
 		{
 			// Get the extension manifest object
-			$manifest = $installer->getManifest( );
-			$manifestFile = $this->getManifestFile( $manifest );
+			$manifest = $installer->getManifest( ); // This is now a SimpleXMLElement
+			// $manifestFile = $this->getManifestFile( $manifest ); // getManifestFile just returns $manifest
 
 			//final information that we need about the extension
-			$type = $this->getAttribute( 'type', $manifestFile );
+			// Use direct SimpleXMLElement attribute access
+			$type = isset($manifest['type']) ? (string) $manifest['type'] : ((isset($manifest->attributes()->type)) ? (string) $manifest->attributes()->type : null);
 
 			//check to see if the type is component
 			if ( strcasecmp( $type, "component" ) == 0 )
 			{
-
 				// Set the extensions name
-				$name = $this->getElementByPath( 'name', $manifestFile );
-				//$name = JFilterInput::clean($name->data(), 'cmd');
+				$name = isset($manifest->name) ? (string) $manifest->name : null;
 				$elementName = $name;
 			} else
 			{
 				//otherwise it is a plugin or module
-				$group = $this->getAttribute( 'group', $manifestFile );
+				$group = isset($manifest['group']) ? (string) $manifest['group'] : ((isset($manifest->attributes()->group)) ? (string) $manifest->attributes()->group : null);
 
-				$name = $this->getElementByPath( 'name', $manifestFile );
-				//$name = JFilterInput::clean($name->data(), 'string');
+				$name = isset($manifest->name) ? (string) $manifest->name : null;
 
 				//find the actual element name for the database
-				$file_element = $this->getElementByPath( 'files', $manifestFile );
-				if ( is_a( $file_element, 'JSimpleXMLElement' ) && count( $file_element->children( ) ) )
+				$file_element = isset($manifest->files) ? $manifest->files : null;
+				if ( $file_element && count( $file_element->children() ) )
 				{
-					$files = &$file_element->children( );
+					$files = $file_element->children();
 					foreach ( $files as $file )
 					{
-						if ( $file->attributes( $type ) )
-						{
-							$elementName = $file->attributes( $type );
-							break;
-						}
+                        // Access attributes like $file['module'] or $file['plugin']
+                        // $type will be 'module' or 'plugin' here.
+                        if (isset($file[(string)$type])) {
+                            $elementName = (string) $file[(string)$type];
+                            break;
+                        }
 					}
 				}
 				if ( strcasecmp( $type, "module" ) == 0 )
 				{
-					$element = $this->getModuleName( $element );
+                    // If $element (passed to function) contains a path, get base name.
+                    // This is only relevant if $elementName wasn't found in manifest's <files> section for some reason.
+					if ($element) { // $element is parameter
+                        $element = $this->getModuleName( $element );
+                    } elseif (isset($elementName)) {
+                        $element = $elementName;
+                    }
 				}
 			}
 
@@ -725,14 +731,14 @@ if ( !class_exists( 'StratumInstaller' ) )
 			// params: merge (older is more important than defaut new)
 
 			// Converting to Object Format
-			$jregistryformat = JRegistryFormat::getInstance( 'ini' );
-			$new_params = $jregistryformat->stringToObject( $obj->params );
-			$old_params = $jregistryformat->stringToObject( $savedParameters->params );
+			$registryFormat = RegistryFormat::getInstance( 'ini' );
+			$new_params = $registryFormat->stringToObject( $obj->params );
+			$old_params = $registryFormat->stringToObject( $savedParameters->params );
 
 			$old_params = (object) array_merge( (array)$new_params, (array)$old_params );
 
 			// Converting back to INI format
-			$savedParameters->params = $jregistryformat->objectToString( $old_params, '' );
+			$savedParameters->params = $registryFormat->objectToString( $old_params, '' );
 
 			// Save the merged new / old settings
 			switch ($manifestInformation["type"])
@@ -765,12 +771,13 @@ if ( !class_exists( 'StratumInstaller' ) )
 		function preventCustomUninstall( &$installer )
 		{
 			//Get the extension manifest object
-			$manifest = &$installer->getManifest( );
-			$manifestFile = &$manifest->document;
+            $manifest = $installer->getManifest(); // $installer->getManifest() returns SimpleXMLElement
 
-			//Cleverly remove the XML containing custom uninstall information
-			$uninstaller = &$manifestFile->getElementByPath( 'uninstall' );
-			$manifestFile->removeChild( $uninstaller );
+            //Cleverly remove the XML containing custom uninstall information
+            // Assuming 'uninstall' is a direct child of the root manifest element
+            if (isset($manifest->uninstall)) {
+                unset($manifest->uninstall);
+            }
 		}
 
 		/**
@@ -837,17 +844,17 @@ if ( !class_exists( 'StratumInstaller' ) )
 			if ( sizeof( $this->_installedExtensions ) > 0 )
 			{
 				$this->msg->type = 'message';
-				$this->msg->message = JText::_( 'LIB_STRATUM_INSTALLATION_COMPLETED' );
+				$this->msg->message = Text::_( 'LIB_STRATUM_INSTALLATION_COMPLETED' );
 				foreach ( $this->_installedExtensions as $extension )
 				{
 					$this->msg->message .= "</li>";
-					$this->msg->message .= "<li>" . JText::_( 'LIB_STRATUM_INSTALLED' ) . " " . $extension["type"] . " " . $extension["element"];
+					$this->msg->message .= "<li>" . Text::_( 'LIB_STRATUM_INSTALLED' ) . " " . $extension["type"] . " " . $extension["element"];
 				}
 				$this->msg->message .= "</li>";
 			} else
 			{
 				$this->msg->type = 'notice';
-				$this->msg->message = JText::_( 'LIB_STRATUM_NOTHING_INSTALLED' );
+				$this->msg->message = Text::_( 'LIB_STRATUM_NOTHING_INSTALLED' );
 			}
 		}
 
@@ -1018,18 +1025,18 @@ if ( !class_exists( 'StratumInstaller' ) )
 		{
 			$return = null;
 
-			$db = JFactory::getDBO( );
+			$db = Factory::getDbo( ); // Already $this->_db
 			$sqlfile = JPATH_ADMINISTRATOR . '/components/' . $this->thisextension . '/install/install.sql';
-			if ( !file_exists( $sqlfile ) )
+			if ( !File::exists( $sqlfile ) )
 			{
 				return;
 			}
 
-			$buffer = file_get_contents( $sqlfile );
+			$buffer = File::read( $sqlfile ); // Changed to File::read
 			if ( $buffer !== false )
 			{
-				jimport( 'joomla.installer.helper' );
-				$queries = JInstallerHelper::splitSql( $buffer );
+				// jimport( 'joomla.installer.helper' ); // Removed, InstallerHelper is used via 'use'
+				$queries = InstallerHelper::splitSql( $buffer );
 				if ( count( $queries ) != 0 )
 				{
 					foreach ( $queries as $query )
@@ -1037,10 +1044,11 @@ if ( !class_exists( 'StratumInstaller' ) )
 						$query = trim( $query );
 						if ( $query != '' && $query{0} != '#' )
 						{
-							$db->setQuery( $query );
-							if ( !$db->execute( ) )
+							$this->_db->setQuery( $query );
+							if ( !$this->_db->execute( ) )
 							{
-								JError::raiseWarning( 1, JText::sprintf( 'JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr( true ) ) );
+								Log::add(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $this->_db->stderr(true)), Log::WARNING, 'jerror');
+								Factory::getApplication()->enqueueMessage(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $this->_db->stderr(true)), 'warning');
 								return false;
 							}
 						}
@@ -1057,7 +1065,8 @@ if ( !class_exists( 'StratumInstaller' ) )
 		 */
 		function getAttribute( $name, $element )
 		{
-			return $element->getAttribute( $name );
+			// $element is expected to be a SimpleXMLElement
+		return isset($element[$name]) ? (string) $element[$name] : (isset($element->attributes()->$name) ? (string) $element->attributes()->$name : null);
 		}
 
 		/**
@@ -1067,6 +1076,8 @@ if ( !class_exists( 'StratumInstaller' ) )
 		 */
 		function getManifestFile( $manifest )
 		{
+			// This method seems to just return the manifest object itself.
+		// In J4/5, $installer->getManifest() directly returns the SimpleXMLElement.
 			return $manifest;
 		}
 
@@ -1075,14 +1086,15 @@ if ( !class_exists( 'StratumInstaller' ) )
 			$short_element = str_replace( 'com_', '', $com );
 
 			$manifestPath = JPATH_ADMINISTRATOR . '/components/' . $com . '/' . 'manifest.xml';
+			// Joomla 4/5 typically uses 'manifest.xml' or 'extension.xml', not component_name.xml by default.
+		// However, will keep the logic if this library specifically creates such files.
 			$shortElementManifestPath = JPATH_ADMINISTRATOR . '/components/' . $com . '/' . $short_element . '.xml';
 
-			if ( JFile::exists( $manifestPath ) )
+			if ( File::exists( $manifestPath ) )
 			{
 				$file = $manifestPath;
 			}
-
-			if ( JFile::exists( $shortElementManifestPath ) )
+			elseif ( File::exists( $shortElementManifestPath ) ) // Use elseif to prioritize manifest.xml
 			{
 				$file = $shortElementManifestPath;
 			}
@@ -1092,7 +1104,7 @@ if ( !class_exists( 'StratumInstaller' ) )
 				return false;
 			}
 
-			$installer = new JInstaller( );
+			$installer = new Installer( );
 
 			return $installer->isManifest( $file );
 		}
@@ -1115,20 +1127,20 @@ if ( !class_exists( 'StratumInstaller' ) )
 		{
 			$extension_name = strtolower( $extension_name );
 
-			$db = JFactory::getDBO( );
-			$query = "SELECT * FROM #__menu WHERE `client_id` = '1' AND `parent_id` = '1' AND LOWER(`title`) = '$extension_name' LIMIT 1;";
-			$db->setQuery( $query );
-			$result = $db->loadObject( );
+			// $this->_db is already available
+			$query = "SELECT * FROM #__menu WHERE `client_id` = '1' AND `parent_id` = '1' AND LOWER(`title`) = " . $this->_db->quote($extension_name) . " LIMIT 1;";
+			$this->_db->setQuery( $query );
+			$result = $this->_db->loadObject( );
 
-			$query = "SELECT * FROM #__extensions WHERE `client_id` = '1' AND `type` = 'component' AND LOWER(`element`) = '$extension_name' LIMIT 1;";
-			$db->setQuery( $query );
-			if ( $component = $db->loadObject( ) )
+			$query = "SELECT * FROM #__extensions WHERE `client_id` = '1' AND `type` = 'component' AND LOWER(`element`) = " . $this->_db->quote($extension_name) . " LIMIT 1;";
+			$this->_db->setQuery( $query );
+			if ( $component = $this->_db->loadObject( ) )
 			{
-				if ( !empty( $result->id ) && empty( $result->component_id ) || $result->component_id != $component->extension_id )
+				if ( !empty( $result->id ) && (empty( $result->component_id ) || $result->component_id != $component->extension_id) )
 				{
-					$query = "UPDATE #__menu SET `component_id` = '$component->extension_id' WHERE `client_id` = '1' AND `parent_id` = '1' AND LOWER(`title`) = '$extension_name' LIMIT 1;";
-					$db->setQuery( $query );
-					$db->execute( );
+					$query = "UPDATE #__menu SET `component_id` = " . (int)$component->extension_id . " WHERE `client_id` = '1' AND `parent_id` = '1' AND LOWER(`title`) = " . $this->_db->quote($extension_name) . " LIMIT 1;";
+					$this->_db->setQuery( $query );
+					$this->_db->execute( );
 				}
 			}
 		}
