@@ -1,5 +1,4 @@
 <?php
-// TODO: J4/5 Enable these use statements once code is updated
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Filesystem\File;
@@ -178,7 +177,6 @@ class Stratum extends JObject
 	 */
 	public static function getURL( $type = 'media', $com = '' )
 	{
-		// TODO: J4/5 review JURI::root(true) usage for media URLs.
 		$name = 'stratum';
 		if( !empty( $com ) )
 		{
@@ -215,7 +213,6 @@ class Stratum extends JObject
 	 */
 	public static function getPath( $type = 'media', $com = '' )
 	{
-		// TODO: J4/5 review JPATH_SITE usage for media paths.
 		$name = 'stratum';
 		if( !empty( $com ) )
 		{
@@ -252,9 +249,7 @@ class Stratum extends JObject
 	{
 		if( !class_exists( 'StratumLoader' ) )
 		{
-			// TODO: J4/5 use Joomla\CMS\Filesystem\File; instead of jimport.
-			//jimport( 'joomla.filesystem.file' );
-			// TODO: J4/5 update JFile::exists() to use imported File class (e.g., File::exists()).
+			//jimport( 'joomla.filesystem.file' ); // Comment kept as original, but functionality replaced
 			if( !File::exists( JPATH_SITE . '/libraries/stratum/loader.php' ) )
 			{
 				return false;
@@ -273,9 +268,7 @@ class Stratum extends JObject
 
 			if( $load_js )
 			{
-				// TODO: J4/5 update JFactory::getDocument() to Joomla\CMS\Factory::getDocument().
 				$doc = Factory::getApplication()->getDocument();
-				// TODO: J4/5 update JURI::getInstance() to Joomla\CMS\Uri\Uri::getInstance().
 				$uri = Uri::getInstance();
 				$js = "stratum.jbase = '" . $uri->root( ) . "';\n";
 				$doc->addScript( Stratum::getURL( 'js' ) . 'common.js' );
@@ -670,18 +663,15 @@ class Stratum extends JObject
 	 */
 	public function isComponentInstalled( $option )
 	{
-		// TODO: Review this query for J4/5 compatibility, especially table name and field names for extensions.
-		// Joomla! 1.6+ code here
-		$db = Factory::getDbo( );
-		$q = new StratumQuery( );
-		$q->select( 'extension_id' );
-		$q->from( '#__extensions' );
-		$q->where( 'type = \'component\'' );
-		$q->where( 'enabled = 1' );
-		$q->where( 'element = ' . $db->Quote( $option ) );
-		$db->setQuery( $q );
-		$res = $db->loadObject( );
-		return $res !== null;
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true)
+			->select($db->quoteName('extension_id'))
+			->from($db->quoteName('#__extensions'))
+			->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+			->where($db->quoteName('enabled') . ' = 1')
+			->where($db->quoteName('element') . ' = ' . $db->quote($option));
+		$db->setQuery($query);
+		return (bool) $db->loadResult();
 	}
 
 }

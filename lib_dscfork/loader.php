@@ -9,19 +9,13 @@
  * 	@license 	Licensed under the GNU GPLv3 <http://www.gnu.org/licenses/gpl.html> or later
  */
 
-// TODO: J4/5 Review for any necessary Joomla 4/5 API updates.
-// TODO: J4/5 Consider if specific Joomla CMS classes should be imported via `use` statements here.
-// use Joomla\CMS\Filesystem\Path;
-// use Joomla\CMS\Log\Log;
-
 defined( '_JEXEC' ) or die ;
 
 class StratumLoader extends JLoader
 {
 	public function __construct( )
 	{
-		// Register StratumLoader::load as an autoload class handler.
-		spl_autoload_register( array( $this, 'load' ) );
+		// spl_autoload_register( array( $this, 'load' ) ); // Removed as it's problematic and JLoader handles autoloading
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 use Joomla\CMS\Factory;
@@ -15,7 +14,6 @@ $stratuminstaller = new stratumInstaller();
 $stratuminstaller->thisextension = $thisextension;
 $stratuminstaller->manifest = !empty($this->manifest) ? $this->manifest : $stratuminstaller->getComponentManifestFile($thisextension);
 
-//TODO: LOAD STRATUM LANGUAGE?
 // load the component language file
 $language = Factory::getLanguage();
 $language->load( $thisextension );

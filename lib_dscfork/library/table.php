@@ -408,8 +408,8 @@ class DSCForkTable extends Table
 		// jimport( 'joomla.application.component.helper' ); // Replaced by use statement
 		$config = ComponentHelper::getParams( 'com_content' );
 		$user = Factory::getApplication()->getIdentity( );
-		$gid = $user->get( 'gid' ); // In J4/5, check if get('gid') is still the way or if it's part of User object's groups.
-                                    // For now, assuming it might work or needs specific group check method.
+		// TODO J4/5: Review user group checking. Consider $user->getAuthorisedGroups() or $user->authorise() for more robust group checks instead of direct gid comparison.
+		$gid = $user->get( 'gid' );
 
 		$filterGroups = $config->get( 'filter_groups' );
 

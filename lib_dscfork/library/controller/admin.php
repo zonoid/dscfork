@@ -75,10 +75,8 @@ class StratumControllerAdmin extends StratumController
 		$config_title = $constant . "_disabled";
 
 		$database = Factory::getDbo( );
-		// TODO J4/5: Update JTable usage.
 		Table::addIncludePath( JPATH_ADMINISTRATOR . '/components/' . $option . '/tables/' );
 		unset( $table );
-		// TODO J4/5: Update JTable usage.
 		$table = Table::getInstance( 'config', $app . 'Table', array('dbo' => $database) );
 		$table->load( array( 'config_name' => $config_title ) );
 		$table->config_name = $config_title;

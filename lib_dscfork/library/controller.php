@@ -1,23 +1,6 @@
 <?php
 <?php
 // TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
-// TODO: J4/5 Consider if specific Joomla CMS classes should be imported via `use` statements here.
-// use Joomla\CMS\Factory;
-// use Joomla\CMS\MVC\Controller\BaseController; // JControllerLegacy is an alias
-// use Joomla\CMS\MVC\Model\BaseDatabaseModel; // For JModelLegacy if applicable, or specific model types
-// use Joomla\CMS\Event\Dispatcher; // For JDispatcher
-// use Joomla\CMS\Plugin\PluginHelper;
-// use Joomla\CMS\Table\Table;
-// use Joomla\CMS\Session\Session;
-// use Joomla\CMS\Router\Route;
-// use Joomla\CMS\Language\Text;
-// use Joomla\CMS\Log\Log; // For JError replacements
-// use Joomla\CMS\Uri\Uri;
-// use Joomla\CMS\HTML\HTMLHelper;
-// use Joomla\CMS\Component\ComponentHelper;
-// use Joomla\CMS\Filter\InputFilter;
-// use Joomla\CMS\Pagination\Pagination; // For JPagination
-// use Joomla\Utilities\ArrayHelper;
 
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Factory;
