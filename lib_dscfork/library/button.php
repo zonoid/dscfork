@@ -10,10 +10,30 @@
  * 	@license 	Licensed under the GNU GPLv3 <http://www.gnu.org/licenses/gpl.html> or later
  */
 
+<?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
+// TODO: J4/5 Consider if specific Joomla CMS classes should be imported via `use` statements here.
+// use Joomla\CMS\Toolbar\Toolbar;
+// use Joomla\CMS\Toolbar\ToolbarButton;
+// use Joomla\CMS\Language\Text;
+// use Joomla\String\StringHelper; // If JString::strtolower is used, though it might be StringHelper::strtolower
+
+/**
+ * 	Fork of Dioscouri Library @see https://github.com/dioscouri/library
+ *
+ * 	@package	Dioscouri Fork Library
+ *  @subpackage	library
+ * 	@author 	Gerald R. Zalsos
+ * 	@link 		http://www.klaraontheweb.com
+ * 	@copyright 	Copyright (C) 2015 klaraontheweb.com All rights reserved.
+ * 	@license 	Licensed under the GNU GPLv3 <http://www.gnu.org/licenses/gpl.html> or later
+ */
+
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport( 'joomla.html.toolbar.button' );
+// TODO: J4/5 Replace jimport with 'use' statement.
+//jimport( 'joomla.html.toolbar.button' );
 
 class StratumButton extends JButton
 {

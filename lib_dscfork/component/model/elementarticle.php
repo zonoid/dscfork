@@ -12,11 +12,28 @@
  * details.
  */
 
+<?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
+/**
+ * @version		$Id: element.php 10381 2008-06-01 03:35:53Z pasamio $
+ * @package		Joomla
+ * @subpackage	Content
+ * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+ * @license		GNU/GPL, see LICENSE.php
+ * Joomla! is free software. This version may have been modified pursuant to the
+ * GNU General Public License, and as distributed it includes or is derivative
+ * of works licensed under the GNU General Public License or other free or open
+ * source software licenses. See COPYRIGHT.php for copyright notices and
+ * details.
+ */
+
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport( 'joomla.application.component.helper' );
-jimport( 'joomla.application.component.model' );
+// TODO: J4/5 Replace jimport with 'use' statement.
+//jimport( 'joomla.application.component.helper' );
+// TODO: J4/5 Replace jimport with 'use' statement.
+//jimport( 'joomla.application.component.model' );
 
 //TODO: UPDATE MODAL ELEMENT WITH THE LATEST JOOMLA ELEMENT MODAL
 
@@ -53,7 +70,7 @@ class SampleModelElementArticle extends JModel
 		}
 
 		// Initialize variables
-		$db = &$this->getDBO( );
+		$db = &$this->getDbo( );
 		$filter = null;
 
 		// Get some variables from the request
@@ -124,7 +141,8 @@ class SampleModelElementArticle extends JModel
 		$total = $db->loadResult( );
 
 		// Create the pagination object
-		jimport( 'joomla.html.pagination' );
+		// TODO: J4/5 Replace jimport with 'use' statement.
+		//jimport( 'joomla.html.pagination' );
 		$this->_page = new JPagination( $total, $limitstart, $limit );
 
 		// Get the articles
@@ -135,7 +153,8 @@ class SampleModelElementArticle extends JModel
 		// If there is a db query error, throw a HTTP 500 and exit
 		if( $db->getErrorNum( ) )
 		{
-			JError::raiseError( 500, $db->stderr( ) );
+			// TODO: J4/5 Replace JError with appropriate Joomla 4/5 error handling or messaging (e.g., Factory::getApplication()->enqueueMessage).
+			// JError::raiseError( 500, $db->stderr( ) );
 			return false;
 		}
 
@@ -167,7 +186,7 @@ class SampleModelElementArticle extends JModel
 	{
 		$mainframe = JFactory::getApplication( );
 
-		$db = JFactory::getDBO( );
+		$db = JFactory::getDbo( );
 		$doc = JFactory::getDocument( );
 		$template = $mainframe->getTemplate( );
 		$fieldName = $control_name ? $control_name . '[' . $name . ']' : $name;
@@ -178,7 +197,7 @@ class SampleModelElementArticle extends JModel
 			$title = $article->title;
 		} else
 		{
-			$title = JText::_( 'LIB_DSCFORK_SELECT_AN_ARTICLE' );
+			$title = JText::_( 'LIB_STRATUM_SELECT_AN_ARTICLE' );
 		}
 
 		$js = "
@@ -194,7 +213,7 @@ class SampleModelElementArticle extends JModel
 		JHTML::_( 'behavior.modal', 'a.modal' );
 		$html = "\n" . '<div style="float: left;"><input style="background: #ffffff;" type="text" id="' . $name . '_name" value="' . htmlspecialchars( $title, ENT_QUOTES, 'UTF-8' ) . '" disabled="disabled" /></div>';
 		// $html .= "\n &nbsp; <input class=\"inputbox modal-button\" type=\"button\" value=\"".JText::_('Select')."\" />";
-		$html .= '<div class="button2-left"><div class="blank"><a class="modal" title="' . JText::_( 'Select an Article' ) . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 500}}">' . JText::_( 'LIB_DSCFORK_SELECT' ) . '</a></div></div>' . "\n";
+		$html .= '<div class="button2-left"><div class="blank"><a class="modal" title="' . JText::_( 'Select an Article' ) . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 500}}">' . JText::_( 'LIB_STRATUM_SELECT' ) . '</a></div></div>' . "\n";
 		$html .= "\n" . '<input type="hidden" id="' . $name . '_id" name="' . $fieldName . '" value="' . (int)$value . '" />';
 
 		return $html;
@@ -213,7 +232,7 @@ class SampleModelElementArticle extends JModel
 
 		$mainframe = JFactory::getApplication( );
 
-		$db = JFactory::getDBO( );
+		$db = JFactory::getDbo( );
 		$doc = JFactory::getDocument( );
 		$template = $mainframe->getTemplate( );
 		$fieldName = $control_name ? $control_name . '[' . $name . ']' : $name;

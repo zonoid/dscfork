@@ -1,9 +1,12 @@
-<?php defined( '_JEXEC' ) or die( 'Restricted access' );
+<?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
+defined( '_JEXEC' ) or die( 'Restricted access' );
 // The following two lines must be defined in the component install.php file prior to including this file
 //$thisextension = strtolower( "com_whatever" );
 //$thisextensionname = substr ( $thisextension, 4 );
 
-JLoader::import( 'stratum.library.installer', JPATH_SITE . '/libraries' );
+// TODO: J4/5 Replace jimport with 'use' statement.
+//JLoader::import( 'stratum.library.installer', JPATH_SITE . '/libraries' );
 $stratuminstaller = new stratumInstaller();
 $stratuminstaller->thisextension = $thisextension;
 $stratuminstaller->manifest = !empty($this->manifest) ? $this->manifest : $stratuminstaller->getComponentManifestFile($thisextension);

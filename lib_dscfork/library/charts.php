@@ -1,4 +1,9 @@
 <?php
+<?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
+// TODO: J4/5 Consider if specific Joomla CMS classes should be imported via `use` statements here.
+// use Joomla\CMS\Language\Text;
+
 /**
  * 	Fork of Dioscouri Library @see https://github.com/dioscouri/library
  *

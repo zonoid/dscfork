@@ -1,4 +1,5 @@
 <?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
 defined( '_JEXEC' ) or die( 'Restricted access' );
 JHTML::_( 'stylesheet', 'menu.css', 'media/com_sample/css/' );
 ?>

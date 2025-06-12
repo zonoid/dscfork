@@ -1,4 +1,13 @@
 <?php
+<?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
+// TODO: J4/5 Consider if specific Joomla CMS classes should be imported via `use` statements here.
+// use Joomla\CMS\Factory;
+// use Joomla\CMS\Event\Dispatcher;
+// use Joomla\CMS\Table\Table;
+// use Joomla\CMS\Plugin\PluginHelper;
+// use Joomla\Registry\Registry;
+
 /**
  * 	Fork of Dioscouri Library @see https://github.com/dioscouri/library
  *
@@ -37,7 +46,8 @@ class StratumArticle extends JObject
 		/*
 		 * Process the prepare content plugins
 		 */
-		JPluginHelper::importPlugin( 'content' );
+		// TODO: J4/5 Replace JPluginHelper::importPlugin with event dispatcher or service locator for plugins.
+		// JPluginHelper::importPlugin( 'content' );
 		$results = $dispatcher->trigger( 'onPrepareContent', array( &$article, &$params, $limitstart ) );
 
 		/*
@@ -102,7 +112,8 @@ class StratumArticle extends JObject
 		/*
 		 * Process the prepare content plugins
 		 */
-		JPluginHelper::importPlugin( 'content' );
+		// TODO: J4/5 Replace JPluginHelper::importPlugin with event dispatcher or service locator for plugins.
+		// JPluginHelper::importPlugin( 'content' );
 		$results = $dispatcher->trigger( 'onPrepareContent', array( &$article, &$params, $limitstart ) );
 
 		/*

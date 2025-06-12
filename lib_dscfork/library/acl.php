@@ -1,4 +1,13 @@
 <?php
+<?php
+// TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
+// TODO: J4/5 Consider if specific Joomla CMS classes should be imported via `use` statements here.
+// use Joomla\CMS\Factory;
+// use Joomla\CMS\User\UserHelper;
+// use Joomla\CMS\Language\Text;
+// use Joomla\CMS\Router\Route;
+// use Joomla\CMS\Uri\Uri;
+
 /**
  * 	Fork of Dioscouri Library @see https://github.com/dioscouri/library
  *
@@ -27,9 +36,10 @@ class StratumAcl
 
 	public static function isAdmin( $userid = NULL, $admin_groups = array("7", "8"), $group_ids_passed = true )
 	{
-		jimport( 'joomla.user.helper' );
+		// TODO: J4/5 Replace jimport with 'use' statement.
+		//jimport( 'joomla.user.helper' );
 		$user = JFactory::getUser( $userid );
-		$groups = JUserHelper::getUserGroups( $user->id );
+		$groups = UserHelper::getUserGroups( $user->id );
 
 		if ( $group_ids_passed )
 		{
@@ -79,7 +89,7 @@ class StratumAcl
 		if ( $returnQuery != NULL )
 			return $query;
 
-		$database = JFactory::getDBO( );
+		$database = JFactory::getDbo( );
 		$database->setQuery( $query );
 		$users = $database->loadObjectList( );
 
