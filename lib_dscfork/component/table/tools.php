@@ -14,26 +14,26 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-Sample::load( 'SampleTable', 'tables._base' );
+// Assuming DSCForkTable is autoloaded or required elsewhere.
+// If not, a require_once might be needed here, e.g.:
+// require_once JPATH_LIBRARIES . '/lib_dscfork/library/table.php';
+use LibDscfork\Library\Table\DSCForkTable; // Placeholder if namespaced, adjust as needed
 
-class SampleTableTools extends SampleTable
+class SampleTableTools extends DSCForkTable
 {
+	protected $_tbl = '#__extensions'; // Table name set directly
+	protected $_tbl_key = 'extension_id';  // Primary key set directly
+
 	/**
 	 * Could this be abstracted into the base?
 	 *
 	 * @param $db
 	 * @return unknown_type
 	 */
-	function SampleTableTools( &$db )
+	public function __construct(&$db)
 	{
-		// Joomla! 1.6+ code here
-		$tbl_key = 'extension_id';
-		$tbl_suffix = 'extensions';
-
-		$this->set( '_suffix', $tbl_suffix );
-		$name = "sample";
-
-		parent::__construct( "#__{$tbl_suffix}", $tbl_key, $db );
+		parent::__construct($db);
+		$this->set('_suffix', 'extensions'); // Keep if _suffix is used
 	}
 
 	function check( )

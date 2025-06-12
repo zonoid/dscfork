@@ -13,7 +13,9 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-jimport( 'joomla.application.component.controller' );
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
 
 class StratumControllerAdmin extends StratumController
 {
@@ -72,17 +74,19 @@ class StratumControllerAdmin extends StratumController
 		$constant = 'page_tooltip_' . $key;
 		$config_title = $constant . "_disabled";
 
-		$database = JFactory::getDBO( );
-		JTable::addIncludePath( JPATH_ADMINISTRATOR . '/components/' . $option . '/tables/' );
+		$database = Factory::getDbo( );
+		// TODO J4/5: Update JTable usage.
+		Table::addIncludePath( JPATH_ADMINISTRATOR . '/components/' . $option . '/tables/' );
 		unset( $table );
-		$table = JTable::getInstance( 'config', $app . 'Table' );
+		// TODO J4/5: Update JTable usage.
+		$table = Table::getInstance( 'config', $app . 'Table', array('dbo' => $database) );
 		$table->load( array( 'config_name' => $config_title ) );
 		$table->config_name = $config_title;
 		$table->value = '1';
 
 		if ( !$table->save( ) )
 		{
-			$msg->message = JText::_( 'LIB_STRATUM_ERROR' ) . ": " . $table->getError( );
+			$msg->message = Text::_( 'LIB_STRATUM_ERROR' ) . ": " . $table->getError( );
 		}
 
 		$this->setRedirect( $msg->link, $msg->message, $msg->type );

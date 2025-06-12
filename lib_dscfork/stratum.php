@@ -1,10 +1,10 @@
 <?php
 // TODO: J4/5 Enable these use statements once code is updated
-// use Joomla\CMS\Factory;
-// use Joomla\CMS\Uri\Uri;
-// use Joomla\CMS\Filesystem\File;
-// use Joomla\CMS\HTML\HTMLHelper;
-// use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 /**
  * 	Fork of Dioscouri Library @see https://github.com/dioscouri/library
@@ -58,7 +58,7 @@ class Stratum extends JObject
 	 */
 	public function getFullVersion( )
 	{
-		$version = $this->getVersion( ) . " " . JText::_( ucfirst( $this->getVersionType( ) ) ) . " " . $this->getBuild( );
+		$version = $this->getVersion( ) . " " . Text::_( ucfirst( $this->getVersionType( ) ) ) . " " . $this->getBuild( );
 		return $version;
 	}
 
@@ -112,7 +112,7 @@ class Stratum extends JObject
 		//if it doesn't pass raise a Joomla Notice
 		if( !$passes )
 		:
-			// TODO: Update JError::raiseNotice for J4/5: JError::raiseNotice( 'VERSION_ERROR', sprintf( JText::_( 'ERROR_PHP_VERSION' ), $minV, $phpV ) );
+			Factory::getApplication()->enqueueMessage(sprintf(Text::_('ERROR_PHP_VERSION'), $minV, $phpV), 'warning');
 		endif;
 
 		//return minimum PHP version
@@ -133,7 +133,7 @@ class Stratum extends JObject
 
 		if( empty( $app ) && !empty( $find ) )
 		{
-			$app = JFactory::getApplication( )->input->getCmd( 'option' );
+			$app = Factory::getApplication( )->input->getCmd( 'option' );
 		}
 
 		if( strpos( $app, 'com_' ) !== false )
@@ -191,16 +191,16 @@ class Stratum extends JObject
 		switch ( $type )
 		{
 			case 'media' :
-				$url = JURI::root( true ) . '/media/' . $name . '/';
+				$url = Uri::root( true ) . '/media/' . $name . '/';
 				break;
 			case 'css' :
-				$url = JURI::root( true ) . '/media/' . $name . '/css/';
+				$url = Uri::root( true ) . '/media/' . $name . '/css/';
 				break;
 			case 'images' :
-				$url = JURI::root( true ) . '/media/' . $name . '/images/';
+				$url = Uri::root( true ) . '/media/' . $name . '/images/';
 				break;
 			case 'js' :
-				$url = JURI::root( true ) . '/media/' . $name . '/js/';
+				$url = Uri::root( true ) . '/media/' . $name . '/js/';
 				break;
 		}
 
@@ -274,9 +274,9 @@ class Stratum extends JObject
 			if( $load_js )
 			{
 				// TODO: J4/5 update JFactory::getDocument() to Joomla\CMS\Factory::getDocument().
-				$doc = Factory::getDocument( );
+				$doc = Factory::getApplication()->getDocument();
 				// TODO: J4/5 update JURI::getInstance() to Joomla\CMS\Uri\Uri::getInstance().
-				$uri = Uri::getInstance( );
+				$uri = Uri::getInstance();
 				$js = "stratum.jbase = '" . $uri->root( ) . "';\n";
 				$doc->addScript( Stratum::getURL( 'js' ) . 'common.js' );
 				$doc->addScriptDeclaration( $js );
@@ -298,23 +298,23 @@ class Stratum extends JObject
 		if( $loaded )
 			return;
 
-		// TODO: J4/5 review jimport usage for Highcharts, consider JLoader::register or PSR-4.
+		// TODO J4/5: Re-evaluate Highcharts loading, consider JLoader or PSR-4.
 		//jimport( 'stratum.highroller.highroller.highroller' );
 		//jimport( 'stratum.highroller.highroller.highrollerareachart' );
 		//jimport( 'stratum.highroller.highroller.highrollerareasplinechart' );
-		jimport( 'stratum.highroller.highroller.highrollerbarchart' );
-		jimport( 'stratum.highroller.highroller.highrollercolumnchart' );
-		jimport( 'stratum.highroller.highroller.highrollerlinechart' );
-		jimport( 'stratum.highroller.highroller.highrollerpiechart' );
-		jimport( 'stratum.highroller.highroller.highrollerscatterchart' );
+		//jimport( 'stratum.highroller.highroller.highrollerbarchart' );
+		//jimport( 'stratum.highroller.highroller.highrollercolumnchart' );
+		//jimport( 'stratum.highroller.highroller.highrollerlinechart' );
+		//jimport( 'stratum.highroller.highroller.highrollerpiechart' );
+		//jimport( 'stratum.highroller.highroller.highrollerscatterchart' );
 		//jimport( 'stratum.highroller.highroller.highrollerseriesdata' );
 		//jimport( 'stratum.highroller.highroller.highrollersplinechart' );
 
 		// TODO: J4/5 review JHtml::_('jquery.framework') and consider Web Asset Manager.
-		//JHtml::_( 'jquery.framework' );
+		//HTMLHelper::_('jquery.framework');
 
 		// TODO: J4/5 review JHTML::_('script',...) for highcharts.js and consider Web Asset Manager.
-		//JHTML::_( 'script', 'highcharts.js', 'libraries/stratum/highroller/highcharts/' );
+		//HTMLHelper::_('script', 'media/stratum/highroller/highcharts/highcharts.js', array('relative' => true));
 		$load = false;
 	}
 
@@ -610,7 +610,7 @@ class Stratum extends JObject
 		if( empty( $this->_data ) )
 		{
 			$this->_data = '';
-			$database = JFactory::getDbo( );
+			$database = Factory::getDbo( );
 			if( $query = $this->_buildQuery( ) )
 			{
 				$database->setQuery( $query );
@@ -672,7 +672,7 @@ class Stratum extends JObject
 	{
 		// TODO: Review this query for J4/5 compatibility, especially table name and field names for extensions.
 		// Joomla! 1.6+ code here
-		$db = JFactory::getDbo( );
+		$db = Factory::getDbo( );
 		$q = new StratumQuery( );
 		$q->select( 'extension_id' );
 		$q->from( '#__extensions' );

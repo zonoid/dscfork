@@ -19,6 +19,17 @@
 // use Joomla\CMS\Pagination\Pagination; // For JPagination
 // use Joomla\Utilities\ArrayHelper;
 
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Exception\InvalidTokenException;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\Event\Event;
+use Joomla\CMS\Log\Log;
+
 /**
  * 	Fork of Dioscouri Library @see https://github.com/dioscouri/library
  *
@@ -33,12 +44,7 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-// TODO: J4/5 Replace jimport with 'use' statement.
-//jimport( 'joomla.filter.filterinput' );
-// TODO: J4/5 Replace jimport with 'use' statement.
-//jimport( 'joomla.application.component.model' );
-
-class StratumController extends JControllerLegacy
+class StratumController extends BaseController
 {
 	/**
 	 * default view
@@ -92,15 +98,17 @@ class StratumController extends JControllerLegacy
 	 */
 	function display( $cachable = false, $urlparams = array() )
 	{
-		$app = JFactory::getApplication( );
+		$app = Factory::getApplication( );
 
 		// this sets the default view
 		$this->input->set( 'view', $this->input->getCmd( 'view', $this->get( 'default_view' ) ) );
 
-		$document = JFactory::getDocument( );
+		$document = Factory::getApplication()->getDocument( );
 
 		$viewType = $document->getType( );
-		$viewName = $this->input->getCmd( 'view', $this->getName( ) );
+		// Use default_view if getName() was providing that context, or adjust if $this->_name is more appropriate.
+		// Based on analysis, default_view is better here.
+		$viewName = $this->input->getCmd('view', $this->default_view);
 
 		$viewLayout = $this->input->getCmd( 'layout', 'default' );
 
@@ -130,22 +138,26 @@ class StratumController extends JControllerLegacy
 			$site = 'Admin';
 		}
 
-		$dispatcher = JDispatcher::getInstance( );
-		$dispatcher->trigger( 'onBeforeDisplay' . $site . 'Component' . $this->_Pluginname, array( ) );
+		// Dispatch the onBeforeDisplay event
+		$eventNameBeforeDisplay = 'onBeforeDisplay' . $site . 'Component' . $this->_Pluginname;
+		$eventBeforeDisplay = new Event($eventNameBeforeDisplay, ['subject' => $this]);
+		Factory::getDispatcher()->dispatch($eventNameBeforeDisplay, $eventBeforeDisplay);
 
 		// Display the view
 		if ( $cachable && $viewType != 'feed' )
 		{
 			$option = $this->get( 'com' );
-			$cache = JFactory::getCache( $option, 'view' );
+			$cache = Factory::getCache( $option, 'view' );
 			$cache->get( $view, 'display' );
 		} else
 		{
 			$view->display( );
 		}
 
-		$dispatcher = JDispatcher::getInstance( );
-		$dispatcher->trigger( 'onAfterDisplay' . $site . 'Component' . $this->_Pluginname, array( ) );
+		// Dispatch the onAfterDisplay event
+		$eventNameAfterDisplay = 'onAfterDisplay' . $site . 'Component' . $this->_Pluginname;
+		$eventAfterDisplay = new Event($eventNameAfterDisplay, ['subject' => $this]);
+		Factory::getDispatcher()->dispatch($eventNameAfterDisplay, $eventAfterDisplay);
 
 		$this->footer( );
 
@@ -158,7 +170,7 @@ class StratumController extends JControllerLegacy
 	 */
 	function getNamespace( )
 	{
-		$app = JFactory::getApplication( );
+		$app = Factory::getApplication( );
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$ns = $app->getName( ) . '::' . 'com.' . $this->get( 'com' ) . '.model.' . $model->getTable( )->get( '_suffix' );
 		return $ns;
@@ -171,7 +183,7 @@ class StratumController extends JControllerLegacy
 	 */
 	function _setModelState( )
 	{
-		$app = JFactory::getApplication( );
+		$app = Factory::getApplication( );
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$ns = $this->getNamespace( );
 
@@ -207,12 +219,14 @@ class StratumController extends JControllerLegacy
 	{
 		if ( empty( $name ) )
 		{
-			$name = $this->getName( );
+			// Use default_view as per analysis for model name default
+			$name = $this->default_view;
 		}
 
 		if ( empty( $prefix ) )
 		{
-			$prefix = $this->getName( ) . 'Model';
+			// Use _name (component name) for prefix as per analysis
+			$prefix = $this->_name . 'Model';
 		}
 
 		$fullname = strtolower( $prefix . $name );
@@ -224,7 +238,7 @@ class StratumController extends JControllerLegacy
 				$model->setState( 'task', @$this->_task );
 
 				// Lets get the application object and set menu information if its available
-				$app = JFactory::getApplication( );
+				$app = Factory::getApplication( );
 				$menu = $app->getMenu( );
 				if ( is_object( $menu ) )
 				{
@@ -338,14 +352,14 @@ class StratumController extends JControllerLegacy
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$row = $model->getTable( );
 		$row->load( $model->getId( ) );
-		$userid = JFactory::getUser( )->id;
+		$userid = Factory::getApplication()->getIdentity( )->id;
 
 		// Checks if item is checkedout, and if so, redirects to view
 		if ( empty( $row->id ) )
 		{
 			$this->input->set( 'hidemainmenu', '1' );
 			$view->setLayout( 'form' );
-		} elseif ( !$row->isCheckedOut( $userid, $row->checked_out ) )
+		} elseif ( !Table::isCheckedOut( $userid, $row->checked_out ) )
 		{
 			if ( $row->checkout( $userid ) )
 			{
@@ -387,16 +401,16 @@ class StratumController extends JControllerLegacy
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$row = $model->getTable( );
 		$row->load( $model->getId( ) );
-		if ( isset( $row->checked_out ) && !JTable::isCheckedOut( JFactory::getUser( )->id, $row->checked_out ) )
+		if ( isset( $row->checked_out ) && !Table::isCheckedOut( Factory::getApplication()->getIdentity( )->id, $row->checked_out ) )
 		{
 			if ( $row->checkin( ) )
 			{
-				$this->message = JText::_( "LIB_STRATUM_ITEM_RELEASED" );
+				$this->message = Text::_( "LIB_STRATUM_ITEM_RELEASED" );
 			}
 		}
 
 		$redirect = "index.php?option=" . $this->get( 'com' ) . "&controller=" . $this->get( 'suffix' ) . "&view=" . $this->get( 'suffix' ) . "&task=view&id=" . $model->getId( ) . "&donotcheckout=1";
-		$redirect = JRoute::_( $redirect, false );
+		$redirect = Route::_( $redirect, false );
 		$this->setRedirect( $redirect, $this->message, $this->messagetype );
 	}
 
@@ -416,7 +430,7 @@ class StratumController extends JControllerLegacy
 		switch (strtolower($task))
 		{
 			case "cancel":
-				$msg = JText::_( 'LIB_STRATUM_OPERATION_CANCELLED' );
+				$msg = Text::_( 'LIB_STRATUM_OPERATION_CANCELLED' );
 				$type = "notice";
 				break;
 			case "close":
@@ -424,7 +438,7 @@ class StratumController extends JControllerLegacy
 				$model = $this->getModel( $this->get( 'suffix' ) );
 				$row = $model->getTable( );
 				$row->load( $model->getId( ) );
-				if ( isset( $row->checked_out ) && !JTable::isCheckedOut( JFactory::getUser( )->id, $row->checked_out ) )
+				if ( isset( $row->checked_out ) && !Table::isCheckedOut( Factory::getApplication()->getIdentity( )->id, $row->checked_out ) )
 				{
 					$row->checkin( );
 				}
@@ -492,8 +506,11 @@ class StratumController extends JControllerLegacy
 		$model = $this->getModel( 'dashboard' );
 		$view = $this->getView( 'dashboard', 'html' );
 
-		$dispatcher = JDispatcher::getInstance( );
-		$results = $dispatcher->trigger( 'onAfterFooter', array( ) );
+		// Dispatch the onAfterFooter event
+		$eventNameAfterFooter = 'onAfterFooter';
+		$eventAfterFooter = new Event($eventNameAfterFooter, ['subject' => $this]);
+		Factory::getDispatcher()->dispatch($eventNameAfterFooter, $eventAfterFooter);
+		$results = $eventAfterFooter->getResults(); // J4 events often store results this way
 
 		$html = implode( '<br />', $results );
 
@@ -530,13 +547,16 @@ class StratumController extends JControllerLegacy
 		// $msg->message = "element: $element, elementTask: $elementTask";
 
 		// gets the plugin named $element
-		$import = JPluginHelper::importPlugin( $this->_name, $element );
-		$dispatcher = JDispatcher::getInstance( );
+		$import = PluginHelper::importPlugin( $this->_name, $element );
+		$dispatcher = Factory::getDispatcher( );
 
 		// executes the event $elementTask for the $element plugin
 		// returns the html from the plugin
 		// passing the element name allows the plugin to check if it's being called (protects against same-task-name issues)
-		$result = $dispatcher->trigger( $elementTask, array( $element ) );
+		$eventArguments = ['element' => $element, 'subject' => $this];
+		$event = new Event($elementTask, $eventArguments);
+		Factory::getDispatcher()->dispatch($elementTask, $event);
+		$result = $event->getResults();
 
 		// This should be a concatenated string of all the results,
 		// in case there are many plugins with this eventname
@@ -573,12 +593,12 @@ class StratumController extends JControllerLegacy
 		$element = $exploded[0];
 		$elementGroup = empty( $exploded[1] ) ? $this->_name : $exploded[1];
 
-		jimport( 'joomla.plugin.helper' );
-		JPluginHelper::importPlugin( $elementGroup );
+		jimport( 'joomla.plugin.helper' ); // This jimport is for Joomla's plugin helper, replaced by use statement.
+		PluginHelper::importPlugin( $elementGroup );
 
 		// gets the plugin named $element
-		$import = JPluginHelper::importPlugin( $elementGroup, $element );
-		$dispatcher = JDispatcher::getInstance( );
+		$import = PluginHelper::importPlugin( $elementGroup, $element );
+		$dispatcher = Factory::getDispatcher( );
 
 		// executes the event $elementTask for the $element plugin
 		// returns the html from the plugin
@@ -635,7 +655,7 @@ class StratumController extends JControllerLegacy
 	 */
 	protected function checkToken( $raiseError = true )
 	{
-		$tokenValid = JSession::checkToken( );
+		$tokenValid = Session::checkToken( );
 
 		if ( $tokenValid )
 		{
@@ -644,8 +664,8 @@ class StratumController extends JControllerLegacy
 
 		if ( $raiseError )
 		{
-			// TODO: J4/5 Replace JError with appropriate Joomla 4/5 error handling or messaging (e.g., Factory::getApplication()->enqueueMessage).
-			//JError::raiseError( '500', 'Invalid Token' );
+			Factory::getApplication()->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
+            throw new InvalidTokenException(Text::_('JINVALID_TOKEN'), 403);
 		}
 
 		return false;
@@ -664,7 +684,7 @@ class StratumController extends JControllerLegacy
 	 */
 	protected function allowAdd( $data = array(), $key = null )
 	{
-		$user = JFactory::getUser( );
+		$user = Factory::getApplication()->getIdentity( );
 		return $user->authorise( 'core.create', $this->option );
 	}
 
@@ -682,7 +702,7 @@ class StratumController extends JControllerLegacy
 	 */
 	protected function allowEdit( $data = array(), $key = 'id' )
 	{
-		return JFactory::getUser( )->authorise( 'core.edit', $this->option );
+		return Factory::getApplication()->getIdentity( )->authorise( 'core.edit', $this->option );
 	}
 
 	/**
@@ -699,7 +719,7 @@ class StratumController extends JControllerLegacy
 	 */
 	protected function allowEditState( $data = array(), $key = 'id' )
 	{
-		return JFactory::getUser( )->authorise( 'core.edit.state', $this->option );
+		return Factory::getApplication()->getIdentity( )->authorise( 'core.edit.state', $this->option );
 	}
 
 	/**
@@ -742,7 +762,7 @@ class StratumController extends JControllerLegacy
 	 */
 	protected function allowDelete( $data = array(), $key = 'id' )
 	{
-		return JFactory::getUser( )->authorise( 'core.delete', $this->option );
+		return Factory::getApplication()->getIdentity( )->authorise( 'core.delete', $this->option );
 	}
 
 	/**
@@ -759,7 +779,7 @@ class StratumController extends JControllerLegacy
 	 */
 	protected function allowView( $data = array(), $key = 'id' )
 	{
-		return JFactory::getUser( )->authorise( 'core.view', $this->option );
+		return Factory::getApplication()->getIdentity( )->authorise( 'core.view', $this->option );
 	}
 
 	/**
@@ -807,17 +827,19 @@ class StratumController extends JControllerLegacy
 			$model->clearCache( );
 
 			$this->messagetype = 'message';
-			$this->message = JText::_( 'LIB_STRATUM_SAVED' );
+			$this->message = Text::_( 'LIB_STRATUM_SAVED' );
 
-			$dispatcher = JDispatcher::getInstance( );
-			$dispatcher->trigger( 'onAfterSave' . $this->get( 'suffix' ), array( $row ) );
+            // Dispatch the onAfterSave event
+            $eventNameOnAfterSave = 'onAfterSave' . $this->get( 'suffix' );
+            $eventOnAfterSave = new Event($eventNameOnAfterSave, ['subject' => $this, 'row' => $row]);
+            Factory::getDispatcher()->dispatch($eventNameOnAfterSave, $eventOnAfterSave);
 
 			$return = $row;
 		} else
 		{
-			$app = JFactory::getApplication( );
+			$app = Factory::getApplication( );
 			$this->messagetype = 'notice';
-			$this->message = JText::_( 'LIB_STRATUM_SAVE_FAILED' );
+			$this->message = Text::_( 'LIB_STRATUM_SAVE_FAILED' );
 			if ( $errors = $row->getErrors( ) )
 			{
 				foreach ( $errors as $error )
@@ -838,7 +860,7 @@ class StratumController extends JControllerLegacy
 		{
 			case "save_as":
 				$redirect .= '&view=' . $this->get( 'suffix' ) . '&task=edit&id=' . $row->id;
-				$this->message .= " - " . JText::_( 'LIB_STRATUM_YOU_ARE_NOW_EDITING_THE_NEW_ITEM' );
+				$this->message .= " - " . Text::_( 'LIB_STRATUM_YOU_ARE_NOW_EDITING_THE_NEW_ITEM' );
 				break;
 			case "saveprev":
 				$redirect .= '&view=' . $this->get( 'suffix' );
@@ -875,7 +897,7 @@ class StratumController extends JControllerLegacy
 				break;
 		}
 
-		$redirect = JRoute::_( $redirect, false );
+		$redirect = Route::_( $redirect, false );
 		$this->setRedirect( $redirect, $this->message, $this->messagetype );
 
 		return $return;
@@ -899,7 +921,7 @@ class StratumController extends JControllerLegacy
 		{
 			$return = $this->input->get( 'return', '', 'BASE64' );
 			$this->redirect = $return ? base64_decode( $return ) : 'index.php?option=' . $this->get( 'com' ) . '&view=' . $this->get( 'suffix' );
-			$this->redirect = JRoute::_( $this->redirect, false );
+			$this->redirect = Route::_( $this->redirect, false );
 		}
 
 		$model = $this->getModel( $this->get( 'suffix' ) );
@@ -919,11 +941,11 @@ class StratumController extends JControllerLegacy
 
 		if ( $error )
 		{
-			$this->message = JText::_( 'LIB_STRATUM_ERROR' ) . " - " . $this->message;
+			$this->message = Text::_( 'LIB_STRATUM_ERROR' ) . " - " . $this->message;
 			$return = false;
 		} else
 		{
-			$this->message = JText::_( 'LIB_STRATUM_ITEMS_DELETED' );
+			$this->message = Text::_( 'LIB_STRATUM_ITEMS_DELETED' );
 			$return = true;
 		}
 
@@ -948,7 +970,7 @@ class StratumController extends JControllerLegacy
 		$this->messagetype = '';
 		$this->message = '';
 		$redirect = 'index.php?option=' . $this->get( 'com' ) . '&view=' . $this->get( 'suffix' );
-		$redirect = JRoute::_( $redirect, false );
+		$redirect = Route::_( $redirect, false );
 
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$row = $model->getTable( );
@@ -960,7 +982,7 @@ class StratumController extends JControllerLegacy
 		if ( !$row->move( $change ) )
 		{
 			$this->messagetype = 'notice';
-			$this->message = JText::_( 'LIB_STRATUM_ORDERING_FAILED' ) . " - " . $row->getError( );
+			$this->message = Text::_( 'LIB_STRATUM_ORDERING_FAILED' ) . " - " . $row->getError( );
 			$return = false;
 		}
 
@@ -985,7 +1007,7 @@ class StratumController extends JControllerLegacy
 		$this->messagetype = '';
 		$this->message = '';
 		$redirect = 'index.php?option=' . $this->get( 'com' ) . '&view=' . $this->get( 'suffix' );
-		$redirect = JRoute::_( $redirect, false );
+		$redirect = Route::_( $redirect, false );
 
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$row = $model->getTable( );
@@ -1009,11 +1031,11 @@ class StratumController extends JControllerLegacy
 
 		if ( $error )
 		{
-			$this->message = JText::_( 'LIB_STRATUM_ERROR' ) . " - " . $this->message;
+			$this->message = Text::_( 'LIB_STRATUM_ERROR' ) . " - " . $this->message;
 			$return = false;
 		} else
 		{
-			$this->message = JText::_( 'LIB_STRATUM_ITEMS_ORDERED' );
+			$this->message = Text::_( 'LIB_STRATUM_ITEMS_ORDERED' );
 			$return = true;
 		}
 
@@ -1041,7 +1063,7 @@ class StratumController extends JControllerLegacy
 		$this->messagetype = '';
 		$this->message = '';
 		$redirect = 'index.php?option=' . $this->get( 'com' ) . '&view=' . $this->get( 'suffix' );
-		$redirect = JRoute::_( $redirect, false );
+		$redirect = Route::_( $redirect, false );
 
 		$model = $this->getModel( $this->get( 'suffix' ) );
 		$row = $model->getTable( );
@@ -1068,7 +1090,7 @@ class StratumController extends JControllerLegacy
 				break;
 			default:
 				$this->messagetype = 'notice';
-				$this->message = JText::_( "LIB_STRATUM_INVALID_TASK" );
+				$this->message = Text::_( "LIB_STRATUM_INVALID_TASK" );
 				$this->setRedirect( $redirect, $this->message, $this->messagetype );
 				return;
 				break;
@@ -1077,7 +1099,7 @@ class StratumController extends JControllerLegacy
 		if ( !in_array( $field, array_keys( $row->getProperties( ) ) ) )
 		{
 			$this->messagetype = 'notice';
-			$this->message = JText::_( "LIB_STRATUM_INVALID_FIELD" ) . ": {$field}";
+			$this->message = Text::_( "LIB_STRATUM_INVALID_FIELD" ) . ": {$field}";
 			$this->setRedirect( $redirect, $this->message, $this->messagetype );
 			return;
 		}
@@ -1109,11 +1131,11 @@ class StratumController extends JControllerLegacy
 
 		if ( $error )
 		{
-			$this->message = JText::_( 'LIB_STRATUM_ERROR' ) . ": " . $this->message;
+			$this->message = Text::_( 'LIB_STRATUM_ERROR' ) . ": " . $this->message;
 			$return = false;
 		} else
 		{
-			$this->message = JText::_( 'LIB_STRATUM_STATUS_CHANGED' );
+			$this->message = Text::_( 'LIB_STRATUM_STATUS_CHANGED' );
 			$return = true;
 		}
 
@@ -1184,7 +1206,7 @@ class StratumController extends JControllerLegacy
 		$id = $model->getId( );
 		$row = $model->getTable( );
 		$row->load( $id );
-		if ( isset( $row->checked_out ) && !JTable::isCheckedOut( JFactory::getUser( )->id, $row->checked_out ) )
+		if ( isset( $row->checked_out ) && !Table::isCheckedOut( Factory::getApplication()->getIdentity( )->id, $row->checked_out ) )
 		{
 			$row->checkin( );
 		}
@@ -1210,8 +1232,26 @@ class StratumController extends JControllerLegacy
 				}
 				break;
 		}
-		$redirect = JRoute::_( $redirect, false );
+		$redirect = Route::_( $redirect, false );
 		$this->setRedirect( $redirect, $this->message, $this->messagetype );
 	}
 
+    /**
+     * Gets the controller name.
+     *
+     * The dispatcher is responsible for parsing the GET variable `view` and instantiating
+     * the controller class. The name of the controller is the value of this `view` variable.
+     * This value is passed by the dispatcher to the constructor of the controller.
+     *
+     * @return  string  The name of this controller.
+     *
+     * @since   Legacy
+     * @note    This is a basic implementation. BaseController sets $this->name.
+     *          StratumController also sets $this->_name from the component.
+     *          This method prioritizes Stratum's _name if available.
+     */
+    public function getName()
+    {
+        return $this->_name ?: $this->name;
+    }
 }

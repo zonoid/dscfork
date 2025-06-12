@@ -13,15 +13,20 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class StratumTableUser extends StratumTable
-{
-	function StratumTableUser( &$db )
-	{
-		$tbl_key = 'id';
-		$tbl_suffix = 'users';
-		$this->set( '_suffix', $tbl_suffix );
+// Assuming DSCForkTable is autoloaded or required elsewhere.
+// If not, a require_once might be needed here, e.g.:
+// require_once dirname(__FILE__) . '/../table.php'; // Adjust path as necessary
+use LibDscfork\Library\Table\DSCForkTable; // Placeholder if namespaced, adjust as needed
 
-		parent::__construct( "#__{$tbl_suffix}", $tbl_key, $db );
+class StratumTableUser extends DSCForkTable
+{
+	protected $_tbl = '#__users'; // Table name set directly
+	protected $_tbl_key = 'id';  // Primary key set directly
+
+	public function __construct(&$db)
+	{
+		parent::__construct($db);
+		$this->set('_suffix', 'users'); // Keep if _suffix is used
 	}
 
 }

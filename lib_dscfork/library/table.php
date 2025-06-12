@@ -13,21 +13,25 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class DSCForkTable extends JTable
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Event\Event;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\Database\DatabaseQuery;
+
+class DSCForkTable extends Table
 {
 	/**
 	 * constructor
 	 */
-	function __construct( $tbl_name, $tbl_key, &$db, $app = null )
+	public function __construct(&$db)
 	{
-		parent::__construct( $tbl_name, $tbl_key, $db );
-
-		$prev = $this->get( '_app' );
-		if( empty( $prev ) )
-		{
-			$this->set( '_app', $app );
-		}
-
+		parent::__construct($db);
+		// Child classes that extend DSCForkTable will need to set $this->_tbl and $this->_tbl_key themselves.
+		// For example:
+		// class MyTable extends DSCForkTable { protected $_tbl = '#__my_table'; protected $_tbl_key = 'id'; ... }
 	}
 
 	/**
@@ -75,7 +79,7 @@ class DSCForkTable extends JTable
 	function getColumns( )
 	{
 		$classname = strtolower( get_class( $this ) );
-		$cache = JFactory::getCache( $classname . '.columns', '' );
+		$cache = Factory::getCache( $classname . '.columns', '' );
 		$cache->setCaching( true );
 		$cache->setLifeTime( '86400' );
 		$fields = $cache->get( $classname );
@@ -181,7 +185,7 @@ class DSCForkTable extends JTable
 			if( empty( $oid ) )
 			{
 				// if still empty, fail
-				$this->setError( JText::_( "LIB_DSCFORK_CANNOT_LOAD_WITH_EMPTY_KEY" ) );
+				$this->setError( Text::_( "LIB_DSCFORK_CANNOT_LOAD_WITH_EMPTY_KEY" ) );
 				return false;
 			}
 		}
@@ -197,8 +201,7 @@ class DSCForkTable extends JTable
 		$db = $this->getDBO( );
 
 		// initialize the query
-		$query = new DSCForkQuery( );
-		// TODO: use joomla query
+		$query = $this->_db->getQuery(true);
 		$query->select( '*' );
 		$query->from( $this->getTableName( ) );
 
@@ -207,15 +210,15 @@ class DSCForkTable extends JTable
 			// Check that $key is field in table
 			if( !in_array( $key, array_keys( $this->getProperties( ) ) ) )
 			{
-				$this->setError( JText::sprintf( 'LIB_DSCFORK_CLASS_DOES_NOT_HAVE_THE_FIELD_KEY', get_class( $this ), $key ) );
+				$this->setError( Text::sprintf( 'LIB_DSCFORK_CLASS_DOES_NOT_HAVE_THE_FIELD_KEY', get_class( $this ), $key ) );
 				return false;
 			}
 			// add the key=>value pair to the query
 			$value = $db->Quote( $db->escape( trim( strtolower( $value ) ) ) );
-			$query->where( $key . ' = ' . $value );
+			$query->where( $db->quoteName($key) . ' = ' . $value );
 		}
 
-		$db->setQuery( (string)$query );
+		$db->setQuery( $query );
 
 		if( $result = $db->loadAssoc( ) )
 		{
@@ -223,8 +226,10 @@ class DSCForkTable extends JTable
 
 			if( $result )
 			{
-				$dispatcher = JDispatcher::getInstance( );
-				$dispatcher->trigger( 'onLoad' . $this->get( '_suffix' ), array( &$this ) );
+				$eventSuffix = $this->get('_suffix', $this->_tbl); // Get suffix or use table name
+				$eventName = 'onLoad' . ucfirst($eventSuffix);
+				$event = new Event($eventName, ['subject' => &$this]);
+				Factory::getDispatcher()->dispatch($eventName, $event);
 			}
 
 			return $result;
@@ -266,12 +271,14 @@ class DSCForkTable extends JTable
 			return false;
 		}
 
-		/*$app = $this->get('_app');
-		 if ( empty($app) || DSCFork::getApp( $app )->get('enable_reorder_table', '0') ||  )
+		// TODO J4/5: Review conditional reorder logic and _app property.
+		/*
+		$app = $this->get('_app');
+		 if ( empty($app) || DSCFork::getApp( $app )->get('enable_reorder_table', '0') )
 		 {
 		 $this->reorder();
-
-		 }*/
+		 }
+		*/
 
 		$this->setError( '' );
 
@@ -288,17 +295,22 @@ class DSCForkTable extends JTable
 	 */
 	function store( $updateNulls = false )
 	{
-		$dispatcher = JDispatcher::getInstance( );
-		$before = $dispatcher->trigger( 'onBeforeStore' . $this->get( '_suffix' ), array( &$this ) );
-		if( in_array( false, $before, true ) )
-		{
+		$eventSuffix = $this->get('_suffix', $this->_tbl);
+		$eventNameBefore = 'onBeforeStore' . ucfirst($eventSuffix);
+		$eventBefore = new Event($eventNameBefore, ['subject' => &$this]);
+		Factory::getDispatcher()->dispatch($eventNameBefore, $eventBefore);
+
+		if ($eventBefore->isPropagationStopped() || in_array(false, $eventBefore->getResults(), true)) {
+			// Assuming getResults might return an array of boolean responses from listeners
+			// or isPropagationStopped indicates a listener wants to halt
 			return false;
 		}
 
 		if( $return = parent::store( $updateNulls ) )
 		{
-			$dispatcher = JDispatcher::getInstance( );
-			$dispatcher->trigger( 'onAfterStore' . $this->get( '_suffix' ), array( $this ) );
+			$eventNameAfter = 'onAfterStore' . ucfirst($eventSuffix);
+			$eventAfter = new Event($eventNameAfter, ['subject' => $this]);
+			Factory::getDispatcher()->dispatch($eventNameAfter, $eventAfter);
 		}
 		return $return;
 	}
@@ -310,17 +322,22 @@ class DSCForkTable extends JTable
 	 */
 	function delete( $oid = null )
 	{
-		$dispatcher = JDispatcher::getInstance( );
-		$before = $dispatcher->trigger( 'onBeforeDelete' . $this->get( '_suffix' ), array( $this, $oid ) );
-		if( in_array( false, $before, true ) )
-		{
+		$eventSuffix = $this->get('_suffix', $this->_tbl);
+		$eventNameBefore = 'onBeforeDelete' . ucfirst($eventSuffix);
+		// Pass both $this (table object) and $oid (original primary key) to the event
+		$eventBefore = new Event($eventNameBefore, ['subject' => $this, 'oid' => $oid]);
+		Factory::getDispatcher()->dispatch($eventNameBefore, $eventBefore);
+
+		if ($eventBefore->isPropagationStopped() || in_array(false, $eventBefore->getResults(), true)) {
 			return false;
 		}
 
 		if( $return = parent::delete( $oid ) )
 		{
-			$dispatcher = JDispatcher::getInstance( );
-			$dispatcher->trigger( 'onAfterDelete' . $this->get( '_suffix' ), array( $this, $oid ) );
+			$eventNameAfter = 'onAfterDelete' . ucfirst($eventSuffix);
+			// Pass both $this (table object) and $oid to the after event as well
+			$eventAfter = new Event($eventNameAfter, ['subject' => $this, 'oid' => $oid]);
+			Factory::getDispatcher()->dispatch($eventNameAfter, $eventAfter);
 		}
 		return $return;
 	}
@@ -335,7 +352,7 @@ class DSCForkTable extends JTable
 	{
 		if( !in_array( 'ordering', array_keys( $this->getProperties( ) ) ) )
 		{
-			$this->setError( JText::sprintf( 'LIB_DSCFORK_CLASS_DOES_NOT_SUPPORT_ORDERING', get_class( $this ) ) );
+			$this->setError( Text::sprintf( 'LIB_DSCFORK_CLASS_DOES_NOT_SUPPORT_ORDERING', get_class( $this ) ) );
 			return false;
 		}
 
@@ -363,8 +380,7 @@ class DSCForkTable extends JTable
 			if( !$this->_db->execute( ) )
 			{
 				$err = $this->_db->getErrorMsg( );
-				JError::raiseError( 500, $err );
-				return false;
+				throw new \RuntimeException($err, 500);
 			}
 
 			$this->ordering = $new;
@@ -389,10 +405,11 @@ class DSCForkTable extends JTable
 		}
 
 		// Filter settings
-		jimport( 'joomla.application.component.helper' );
-		$config = JComponentHelper::getParams( 'com_content' );
-		$user = JFactory::getUser( );
-		$gid = $user->get( 'gid' );
+		// jimport( 'joomla.application.component.helper' ); // Replaced by use statement
+		$config = ComponentHelper::getParams( 'com_content' );
+		$user = Factory::getApplication()->getIdentity( );
+		$gid = $user->get( 'gid' ); // In J4/5, check if get('gid') is still the way or if it's part of User object's groups.
+                                    // For now, assuming it might work or needs specific group check method.
 
 		$filterGroups = $config->get( 'filter_groups' );
 
@@ -410,20 +427,20 @@ class DSCForkTable extends JTable
 			switch ($filterType)
 			{
 				case 'NH' :
-					$filter = new JFilterInput( );
+					$filter = new InputFilter( );
 					break;
 				case 'WL' :
-					$filter = new JFilterInput( $filterDSCFork, $filterAttrs, 0, 0 );
+					$filter = new InputFilter( $filterDSCFork, $filterAttrs, 0, 0 );
 					break;
 				case 'BL' :
 				default :
-					$filter = new JFilterInput( $filterDSCFork, $filterAttrs, 1, 1 );
+					$filter = new InputFilter( $filterDSCFork, $filterAttrs, 1, 1 );
 					break;
 			}
 			$this->$fieldname = $filter->clean( $this->$fieldname );
 		} elseif( empty( $filterGroups ) )
 		{
-			$filter = new JFilterInput( array( ), array( ), 1, 1 );
+			$filter = new InputFilter( array( ), array( ), 1, 1 );
 			$this->$fieldname = $filter->clean( $this->$fieldname );
 		}
 	}

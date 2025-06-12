@@ -1,12 +1,16 @@
 <?php
 // TODO: J4/5 Review for Joomla 4/5 API/structure compatibility (e.g., controllers, models, views, JHtml, JRoute, JForm, JText, database queries, jimport vs use).
 defined( '_JEXEC' ) or die( 'Restricted access' );
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Application\ApplicationHelper;
+
 // The following two lines must be defined in the component install.php file prior to including this file
 //$thisextension = strtolower( "com_whatever" );
 //$thisextensionname = substr ( $thisextension, 4 );
 
-// TODO: J4/5 Replace jimport with 'use' statement.
-//JLoader::import( 'stratum.library.installer', JPATH_SITE . DIRECTORY_SEPARATOR . 'libraries' );
+require_once JPATH_SITE . '/libraries/stratum/library/installer.php';
 $stratuminstaller = new stratumInstaller();
 $stratuminstaller->thisextension = $thisextension;
 $stratuminstaller->manifest = $this->manifest;
@@ -15,7 +19,7 @@ $stratuminstaller->fixAdminMenu( $thisextension );
 
 //TODO: LOAD STRATUM LANGUAGE?
 // load the component language file
-$language = JFactory::getLanguage();
+$language = Factory::getLanguage();
 $language->load( $thisextension );
 
 $status = new JObject();
@@ -37,13 +41,13 @@ if ( (is_a($libraries, 'JSimpleXMLElement') || is_a( $libraries, 'JXMLElement'))
     {
         $name		= $stratuminstaller->getAttribute('library', $library);
         $publish	= $stratuminstaller->getAttribute('publish', $library);
-        $client	    = JApplicationHelper::getClientInfo($stratuminstaller->getAttribute('client', $library), true);
+        $client	    = ApplicationHelper::getClientInfo($stratuminstaller->getAttribute('client', $library), true);
 
         // Set the installation path
         if (!empty ($name)) {
             $this->parent->setPath('extension_root', $client->path.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.$name);
         } else {
-            $this->parent->abort(JText::_('LIB_STRATUM_LIBRARY').' '.JText::_('LIB_STRATUM_INSTALL').': '.JText::_('LIB_STRATUM_INSTALL_LIBRARY_FILE_MISSING'));
+            $this->parent->abort(Text::_('LIB_STRATUM_LIBRARY').' '.Text::_('LIB_STRATUM_INSTALL').': '.Text::_('LIB_STRATUM_INSTALL_LIBRARY_FILE_MISSING'));
             return false;
         }
 
@@ -60,10 +64,10 @@ if ( (is_a($libraries, 'JSimpleXMLElement') || is_a( $libraries, 'JXMLElement'))
         // track the message and status of installation from stratumInstaller
         if ($result)
         {
-            $alt = JText::_( "Installed" );
+            $alt = Text::_( "Installed" );
             $status = "<img src='" . Stratum::getURL( 'images' ) . "tick.png' border='0' alt='{$alt}' />";
         } else {
-            $alt = JText::_( "Failed" );
+            $alt = Text::_( "Failed" );
             $error = $stratumInstaller->getError();
             $status = "<img src='" . Stratum::getURL( 'images' ) . "publish_x.png' border='0' alt='{$alt}' />";
             $status .= " - ".$error;
@@ -85,13 +89,13 @@ if ( (is_a($templates, 'JSimpleXMLElement') || is_a( $templates, 'JXMLElement'))
 	{
 		$mname		= $stratuminstaller->getAttribute('template', $template);
 		$mpublish	= $stratuminstaller->getAttribute('publish', $template);
-		$mclient	= JApplicationHelper::getClientInfo($stratuminstaller->getAttribute('client', $template), true);
+		$mclient	= ApplicationHelper::getClientInfo($stratuminstaller->getAttribute('client', $template), true);
 		
 		// Set the installation path
 		if (!empty ($mname)) {
 			$this->parent->setPath('extension_root', $mclient->path.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$mname);
 		} else {
-			$this->parent->abort(JText::_('LIB_STRATUM_TEMPLATE').' '.JText::_('LIB_STRATUM_INSTALL').': '.JText::_('LIB_STRATUM_INSTALL_TEMPLATE_FILE_MISSING'));
+			$this->parent->abort(Text::_('LIB_STRATUM_TEMPLATE').' '.Text::_('LIB_STRATUM_INSTALL').': '.Text::_('LIB_STRATUM_INSTALL_TEMPLATE_FILE_MISSING'));
 			return false;
 		}
 		
@@ -108,10 +112,10 @@ if ( (is_a($templates, 'JSimpleXMLElement') || is_a( $templates, 'JXMLElement'))
 		// track the message and status of installation from stratumInstaller
 		if ($result) 
 		{
-			$alt = JText::_( "LIB_STRATUM_INSTALLED" );
+			$alt = Text::_( "LIB_STRATUM_INSTALLED" );
 			$mstatus = "<img src='" . Stratum::getURL( 'images' ) . "tick.png' border='0' alt='{$alt}' />";
 		} else {
-			$alt = JText::_( "LIB_STRATUM_FAILED" );
+			$alt = Text::_( "LIB_STRATUM_FAILED" );
 			$error = $stratumInstaller->getError();
 			$mstatus = "<img src='" . Stratum::getURL( 'images' ) . "publish_x.png' border='0' alt='{$alt}' />";
 			$mstatus .= " - ".$error;
@@ -135,13 +139,13 @@ if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && 
 		$mname		= $stratuminstaller->getAttribute('module', $module);
 		$mpublish	= $stratuminstaller->getAttribute('publish', $module);
 		$mposition	= $stratuminstaller->getAttribute('position', $module);
-		$mclient	= JApplicationHelper::getClientInfo($stratuminstaller->getAttribute('client', $module), true);
+		$mclient	= ApplicationHelper::getClientInfo($stratuminstaller->getAttribute('client', $module), true);
 		
 		// Set the installation path
 		if (!empty ($mname)) {
 			$this->parent->setPath('extension_root', $mclient->path.DIRECTORY_SEPARATOR.'modules'.DIRECTORY_SEPARATOR.$mname);
 		} else {
-			$this->parent->abort(JText::_('LIB_STRATUM_MODULE').' '.JText::_('LIB_STRATUM_INSTALL').': '.JText::_('LIB_STRATUM_INSTALL_MODULE_FILE_MISSING'));
+			$this->parent->abort(Text::_('LIB_STRATUM_MODULE').' '.Text::_('LIB_STRATUM_INSTALL').': '.Text::_('LIB_STRATUM_INSTALL_MODULE_FILE_MISSING'));
 			return false;
 		}
 		
@@ -162,16 +166,16 @@ if ( (is_a($modules, 'JSimpleXMLElement') || is_a( $modules, 'JXMLElement')) && 
 			// set the position of the module if it is a new install and if position value exists in manifest
 			if (!empty($mposition))
 			{
-				$db = JFactory::getDBO();
+				$db = Factory::getDbo();
                 $q = "UPDATE #__modules SET `position` = '{$mposition}' WHERE `module` = '{$result['element']}' AND `position` = '';";
                 $db->setQuery($q);
 				$db->execute();
 			}
 
-			$alt = JText::_( "LIB_STRATUM_INSTALLED" );
+			$alt = Text::_( "LIB_STRATUM_INSTALLED" );
 			$mstatus = "<img src='" . Stratum::getURL( 'images' ) . "tick.png' border='0' alt='{$alt}' />";
 		} else {
-			$alt = JText::_( "LIB_STRATUM_FAILED" );
+			$alt = Text::_( "LIB_STRATUM_FAILED" );
 			$error = $stratuminstaller->getError();
 			$mstatus = "<img src='" . Stratum::getURL( 'images' ) . "publish_x.png' border='0' alt='{$alt}' />";
 			$mstatus .= " - ".$error;
@@ -202,7 +206,7 @@ if ( (is_a($plugins, 'JSimpleXMLElement') || is_a( $plugins, 'JXMLElement')) && 
 		if (!empty($pname) && !empty($pgroup)) {
 			$this->parent->setPath('extension_root', JPATH_ROOT.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.$pgroup);
 		} else {
-			$this->parent->abort(JText::_('LIB_STRATUM_PLUGIN').' '.JText::_('LIB_STRATUM_INSTALL').': '.JText::_('LIB_STRATUM_INSTALL_PLUGIN_FILE_MISSING'));
+			$this->parent->abort(Text::_('LIB_STRATUM_PLUGIN').' '.Text::_('LIB_STRATUM_INSTALL').': '.Text::_('LIB_STRATUM_INSTALL_PLUGIN_FILE_MISSING'));
 			return false;
 		}
 		
@@ -218,10 +222,10 @@ if ( (is_a($plugins, 'JSimpleXMLElement') || is_a( $plugins, 'JXMLElement')) && 
 		
 		// track the message and status of installation from stratumInstaller
 		if ($result) {
-			$alt = JText::_( "LIB_STRATUM_INSTALLED" );
+			$alt = Text::_( "LIB_STRATUM_INSTALLED" );
 			$pstatus = "<img src='" . Stratum::getURL( 'images' ) . "tick.png' border='0' alt='{$alt}' />";
 		} else {
-			$alt = JText::_( "LIB_STRATUM_FAILED" );
+			$alt = Text::_( "LIB_STRATUM_FAILED" );
 			$error = $stratuminstaller->getError();
 			$pstatus = "<img src='" . Stratum::getURL( 'images' ) . "publish_x.png' border='0' alt='{$alt}' /> ";
 			$pstatus .= " - ".$error;	
@@ -247,12 +251,12 @@ if ( (is_a($plugins, 'JSimpleXMLElement') || is_a( $plugins, 'JXMLElement')) && 
 $rows = 0;
 ?>
 
-<h2><?php echo JText::_('LIB_STRATUM_INSTALLATION_RESULTS'); ?></h2>
+<h2><?php echo Text::_('LIB_STRATUM_INSTALLATION_RESULTS'); ?></h2>
 <table class="adminlist">
 	<thead>
 		<tr>
-			<th colspan="2"><?php echo JText::_('LIB_STRATUM_EXTENSION'); ?></th>
-			<th width="30%"><?php echo JText::_('LIB_STRATUM_STATUS'); ?></th>
+			<th colspan="2"><?php echo Text::_('LIB_STRATUM_EXTENSION'); ?></th>
+			<th width="30%"><?php echo Text::_('LIB_STRATUM_STATUS'); ?></th>
 		</tr>
 	</thead>
 	<tfoot>
@@ -262,13 +266,13 @@ $rows = 0;
 	</tfoot>
 	<tbody>
 		<tr class="row0">
-			<td class="key" colspan="2"><?php echo JText::_( $thisextension ); ?></td>
-			<td class="key"><center><?php $alt = JText::_('LIB_STRATUM_INSTALLED'); echo "<img src='" . Stratum::getURL( 'images' ) . "tick.png' border='0' alt='{$alt}' />"; ?></center></td>
+			<td class="key" colspan="2"><?php echo Text::_( $thisextension ); ?></td>
+			<td class="key"><center><?php $alt = Text::_('LIB_STRATUM_INSTALLED'); echo "<img src='" . Stratum::getURL( 'images' ) . "tick.png' border='0' alt='{$alt}' />"; ?></center></td>
 		</tr>
 <?php if (count($status->modules)) : ?>
 		<tr>
-			<th><?php echo JText::_('LIB_STRATUM_MODULE'); ?></th>
-			<th><?php echo JText::_('LIB_STRATUM_CLIENT'); ?></th>
+			<th><?php echo Text::_('LIB_STRATUM_MODULE'); ?></th>
+			<th><?php echo Text::_('LIB_STRATUM_CLIENT'); ?></th>
 			<th></th>
 		</tr>
 	<?php foreach ($status->modules as $module) : ?>
@@ -281,8 +285,8 @@ $rows = 0;
 endif;
 if (count($status->plugins)) : ?>
 		<tr>
-			<th><?php echo JText::_('LIB_STRATUM_PLUGIN'); ?></th>
-			<th><?php echo JText::_('LIB_STRATUM_GROUP'); ?></th>
+			<th><?php echo Text::_('LIB_STRATUM_PLUGIN'); ?></th>
+			<th><?php echo Text::_('LIB_STRATUM_GROUP'); ?></th>
 			<th></th>
 		</tr>
 	<?php foreach ($status->plugins as $plugin) : ?>
@@ -295,8 +299,8 @@ if (count($status->plugins)) : ?>
 endif;
 if (count($status->templates)) : ?>
 		<tr>
-			<th><?php echo JText::_('LIB_STRATUM_TEMPLATE'); ?></th>
-			<th><?php echo JText::_('LIB_STRATUM_CLIENT'); ?></th>
+			<th><?php echo Text::_('LIB_STRATUM_TEMPLATE'); ?></th>
+			<th><?php echo Text::_('LIB_STRATUM_CLIENT'); ?></th>
 			<th></th>
 		</tr>
 	<?php foreach ($status->templates as $template) : ?>

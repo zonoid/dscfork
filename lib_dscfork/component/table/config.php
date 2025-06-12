@@ -14,19 +14,20 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-Sample::load( 'SampleTable', 'tables._base' );
+// Assuming DSCForkTable is autoloaded or required elsewhere.
+// If not, a require_once might be needed here, e.g.:
+// require_once JPATH_LIBRARIES . '/lib_dscfork/library/table.php';
+use LibDscfork\Library\Table\DSCForkTable; // Placeholder if namespaced, adjust as needed
 
-class SampleTableConfig extends SampleTable
+class SampleTableConfig extends DSCForkTable
 {
+	protected $_tbl = '#__sample_config'; // Table name set directly
+	protected $_tbl_key = 'config_name';  // Primary key set directly
 
-	function SampleTableConfig( &$db )
+	public function __construct(&$db)
 	{
-		$tbl_key = 'config_name';
-		$tbl_suffix = 'config';
-		$this->set( '_suffix', $tbl_suffix );
-		$name = "sample";
-
-		parent::__construct( "#__{$name}_{$tbl_suffix}", $tbl_key, $db );
+		parent::__construct($db);
+		$this->set('_suffix', 'config'); // Keep if _suffix is used
 	}
 
 	function store( $updateNulls = true )

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- TODO: J4/5 review the version attribute in the extension tag. Joomla 4/5 might expect "4.0" or "5.0", or it might not be strictly necessary for libraries. -->
-<extension type="library" method="upgrade" version="3.0">
+<extension type="library" method="upgrade" version="4.0">
 	<name>Stratum Library</name>
 	<libraryname>stratum</libraryname>
 	<author>Gerald R. Zalsos</author>

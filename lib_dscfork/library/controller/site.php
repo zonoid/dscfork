@@ -13,7 +13,11 @@
 /** ensure this file is being included by a parent file */
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class StratumControllerSite extends StratumController
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+
+class StratumControllerSite extends BaseController
 {
 	var $_models = array( );
 	var $message = "";
@@ -54,6 +58,7 @@ class StratumControllerSite extends StratumController
 		$name = $app->getName( );
 		$model_name = $name . "ModelDashboard";
 
+		// TODO J4/5: Review custom model loading
 		$app->load( $model_name, "models.dashboard" );
 		$model = new $model_name( );
 
