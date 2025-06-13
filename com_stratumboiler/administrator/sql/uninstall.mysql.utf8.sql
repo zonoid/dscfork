@@ -1,0 +1,3 @@
+-- Placeholder for StratumBoiler component uninstallation SQL
+-- Example:
+-- DROP TABLE IF EXISTS `#__stratumboiler_items`;

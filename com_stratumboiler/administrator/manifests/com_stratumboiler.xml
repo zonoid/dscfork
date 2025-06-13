@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="4.0" method="upgrade">
+    <name>com_stratumboiler</name>
+    <author>StratumBoiler Developer</author>
+    <creationDate>2024-07-16</creationDate>
+    <copyright>Copyright (C) 2024 StratumBoiler Developer. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>developer@example.com</authorEmail>
+    <authorUrl>www.example.com</authorUrl>
+    <version>1.0.0</version>
+    <description>COM_STRATUMBOILER_XML_DESCRIPTION</description>
+    <namespace>StratumBoiler\\Component\\StratumBoiler</namespace>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <media destination="com_stratumboiler" folder="media">
+        <folder>css</folder>
+        <folder>js</folder>
+        <folder>images</folder>
+        <filename>index.html</filename>
+    </media>
+
+    <administration>
+        <menu img="class:cogs">COM_STRATUMBOILER_MENU</menu>
+        <files folder="administrator">
+            <filename>stratumboiler.php</filename>
+            <filename>index.html</filename>
+            <folder>controllers</folder>
+            <folder>language</folder>
+            <folder>manifests</folder>
+            <folder>models</folder>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
+        <languages folder="administrator/language">
+            <language tag="en-GB">en-GB/com_stratumboiler.ini</language>
+            <language tag="en-GB">en-GB/com_stratumboiler.sys.ini</language>
+        </languages>
+    </administration>
+
+    <files folder="site">
+        <filename>stratumboiler.php</filename>
+        <filename>index.html</filename>
+        <folder>controllers</folder>
+        <folder>language</folder>
+        <folder>models</folder>
+        <folder>views</folder>
+        <!-- <folder>services</folder> site services optional for basic -->
+    </files>
+    <languages folder="site/language">
+        <language tag="en-GB">en-GB/com_stratumboiler.ini</language>
+    </languages>
+
+</extension>
